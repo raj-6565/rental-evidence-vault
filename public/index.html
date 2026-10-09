@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rental Evidence Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c1712; --ink-2:#241d16; --ink-3:#2c2419;
+  --paper:#f3ead9; --paper-2:#e9dcc2;
+  --text-on-ink:#e9ddc8; --text-on-ink-dim:#a89a82;
+  --text-on-paper:#241c12; --text-on-paper-dim:#6b5d48;
+  --brass:#c08936; --brass-dark:#9c6d28;
+  --forest:#3f6e4b; --forest-bg:#24301f;
+  --brick:#a8452f; --brick-bg:#301e1a;
+  --awaiting:#5c7a93; --awaiting-bg:#1f2a30;
+  --border-on-ink:#3a3024; --border-on-paper:#d8c7a2;
+  --radius:10px; --radius-sm:6px;
+  --serif:'Source Serif 4',Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  --mono:'SF Mono',Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text-on-ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--serif);margin:0}
+a{color:var(--brass)}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2rem;border-bottom:1px solid var(--border-on-ink)}
+.wordmark{font-family:var(--serif);font-size:1.25rem;font-weight:600;letter-spacing:.01em}
+.wordmark em{font-style:normal;color:var(--brass)}
+.userchip{display:flex;align-items:center;gap:.9rem;font-size:.85rem;color:var(--text-on-ink-dim)}
+.userchip b{color:var(--text-on-ink);font-weight:600}
+.ghostbtn{background:none;border:1px solid var(--border-on-ink);color:var(--text-on-ink-dim);padding:.45rem .9rem;border-radius:var(--radius-sm);font-size:.82rem;cursor:pointer}
+.ghostbtn:hover{border-color:var(--brass);color:var(--text-on-ink)}
+
+main{max-width:980px;margin:0 auto;padding:2.5rem 2rem 5rem}
+.hidden{display:none !important}
+
+.authwrap{max-width:420px;margin:4rem auto 0}
+.authtabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
+.authtab{flex:1;text-align:center;padding:.7rem;border-radius:var(--radius-sm);cursor:pointer;font-size:.9rem;color:var(--text-on-ink-dim);border:1px solid var(--border-on-ink)}
+.authtab.active{background:var(--paper);color:var(--text-on-paper);border-color:var(--paper);font-weight:600}
+.panel{background:var(--paper);color:var(--text-on-paper);border-radius:var(--radius);padding:1.8rem;box-shadow:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.28)}
+.panel h2{font-size:1.3rem;margin-bottom:1.3rem}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.78rem;color:var(--text-on-paper-dim);margin-bottom:.35rem}
+.field input,.field select{width:100%;padding:.6rem .7rem;border:1px solid var(--border-on-paper);border-radius:var(--radius-sm);background:#fff;color:var(--text-on-paper);font-size:.92rem;font-family:var(--sans)}
+.roletoggle{display:flex;gap:.6rem}
+.roleopt{flex:1;text-align:center;padding:.6rem;border:1px solid var(--border-on-paper);border-radius:var(--radius-sm);cursor:pointer;font-size:.85rem;color:var(--text-on-paper-dim)}
+.roleopt.active{background:var(--brass);border-color:var(--brass);color:#fff;font-weight:600}
+.primarybtn{width:100%;background:var(--brass);color:#fff;border:none;padding:.75rem;border-radius:var(--radius-sm);font-size:.92rem;font-weight:600;cursor:pointer;margin-top:.3rem}
+.primarybtn:hover{background:var(--brass-dark)}
+.inlinemsg{font-size:.82rem;margin-top:.8rem;padding:.6rem .8rem;border-radius:var(--radius-sm)}
+.inlinemsg.ok{background:var(--forest-bg);color:#bfe0c6;border:1px solid var(--forest)}
+.inlinemsg.bad{background:var(--brick-bg);color:#f0c2b8;border:1px solid var(--brick)}
+
+.dashhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem}
+.dashhead p{color:var(--text-on-ink-dim);font-size:.9rem;margin:.2rem 0 0}
+.leasegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.1rem}
+.leasecard{background:var(--paper);color:var(--text-on-paper);border-radius:var(--radius);padding:1.2rem;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.22);border-left:4px solid var(--forest)}
+.leasecard.ended{border-left-color:#998a6e;opacity:.8}
+.leasecard h3{font-size:1.05rem;margin-bottom:.5rem}
+.leasecard .meta{font-size:.8rem;color:var(--text-on-paper-dim);line-height:1.6}
+.badge{display:inline-block;font-size:.68rem;padding:.2rem .55rem;border-radius:99px;font-weight:600}
+.badge.active{background:var(--forest-bg);color:#9fcaa8}
+.badge.ended{background:#3a3326;color:#c7b894}
+.badge.pending{background:var(--awaiting-bg);color:#a9c2d4}
+
+.newleasecard{border:1.5px dashed var(--border-on-ink);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem;cursor:pointer;color:var(--text-on-ink-dim);min-height:120px;font-size:.88rem}
+.newleasecard:hover{border-color:var(--brass);color:var(--text-on-ink)}
+.newleasecard .plus{font-size:1.6rem;font-family:var(--serif);color:var(--brass)}
+
+.leaseformwrap{background:var(--paper);color:var(--text-on-paper);border-radius:var(--radius);padding:1.6rem;margin-bottom:1.5rem;box-shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.24)}
+.formrow{display:flex;gap:1rem;flex-wrap:wrap}
+.formrow .field{flex:1;min-width:180px}
+
+.backlink{display:inline-flex;align-items:center;gap:.4rem;color:var(--text-on-ink-dim);font-size:.85rem;cursor:pointer;margin-bottom:1.2rem}
+.backlink:hover{color:var(--brass)}
+
+.leasehead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.6rem;flex-wrap:wrap;gap:1rem}
+.leasehead h2{font-size:1.6rem;margin-bottom:.4rem}
+.leasehead .meta{color:var(--text-on-ink-dim);font-size:.88rem}
+.leasehead .meta b{color:var(--text-on-ink)}
+
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.9rem;margin-bottom:1.8rem}
+.stat{background:var(--ink-2);border:1px solid var(--border-on-ink);border-radius:var(--radius);padding:1rem 1.1rem}
+.stat .num{font-family:var(--serif);font-size:1.5rem;color:var(--brass)}
+.stat .lbl{font-size:.76rem;color:var(--text-on-ink-dim);margin-top:.2rem}
+
+.section{background:var(--ink-2);border:1px solid var(--border-on-ink);border-radius:var(--radius);padding:1.4rem;margin-bottom:1.3rem}
+.section h3{font-size:.95rem;color:var(--text-on-ink);margin-bottom:1rem;font-family:var(--sans);font-weight:600}
+.darkfield{margin-bottom:.9rem}
+.darkfield label{display:block;font-size:.78rem;color:var(--text-on-ink-dim);margin-bottom:.35rem}
+.darkfield input,.darkfield select{width:100%;padding:.6rem .7rem;border:1px solid var(--border-on-ink);border-radius:var(--radius-sm);background:var(--ink);color:var(--text-on-ink);font-size:.9rem;font-family:var(--sans)}
+.btn{background:var(--brass);color:#fff;border:none;padding:.6rem 1.1rem;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--brass-dark)}
+.btn.outline{background:none;border:1px solid var(--border-on-ink);color:var(--text-on-ink)}
+.btn.outline:hover{border-color:var(--brass);color:var(--brass)}
+.btn.danger{background:none;border:1px solid var(--brick);color:#e0988a}
+.btn.danger:hover{background:var(--brick-bg)}
+.btnrow{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.3rem}
+
+.evcard{background:var(--ink);border:1px solid var(--border-on-ink);border-radius:var(--radius-sm);padding:.9rem 1rem;margin-bottom:.7rem}
+.evcard .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.evtype{font-size:.72rem;text-transform:capitalize;color:var(--text-on-ink-dim)}
+.evdesc{font-size:.88rem;color:var(--text-on-ink)}
+.evwho{font-size:.76rem;color:var(--text-on-ink-dim);margin-top:.4rem}
+.evwho b{color:var(--text-on-ink)}
+#toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:#8a2c2c;color:#fff;padding:.7rem 1.2rem;border-radius:var(--radius-sm);font-size:.85rem;box-shadow:0 4px 14px rgba(0,0,0,.4);z-index:50;display:none;max-width:90vw}
+.pvres{margin-top:.4rem;font-size:.78rem;color:var(--text-on-ink-dim);word-break:break-all}
+.keybanner{background:#3b2a12;border:1px solid var(--brass);color:#f3dcb0;padding:.7rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;font-size:.85rem}
+.keybanner input{margin-left:.5rem}
+.fp{font-family:var(--mono);font-size:.7rem;color:var(--text-on-ink-dim);margin:0 .6rem}
+.verifychip{margin:.6rem 0 1rem;padding:.6rem .9rem;border-radius:var(--radius-sm);font-size:.85rem;border:1px solid var(--border-on-ink)}
+.verifychip.ok{color:#7fb069;border-color:#4f7a3d}
+.verifychip.bad{color:#f1b0b0;border-color:#8a2c2c;background:#2e1414}
+.sigs{font-size:.78rem;color:var(--text-on-ink-dim);margin:.3rem 0}
+.keyfps{font-family:var(--mono);font-size:.72rem;color:var(--text-on-ink-dim);margin-top:.35rem}
+.evphoto{display:block;max-width:100%;max-height:220px;border-radius:var(--radius-sm);margin:.5rem 0;border:1px solid var(--border-on-ink)}
+
+.block{background:var(--ink);border:1px solid var(--border-on-ink);border-radius:var(--radius-sm);padding:.9rem 1rem;margin-bottom:.6rem}
+.block .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem}
+.block .idx{font-family:var(--serif);color:var(--brass);font-size:.95rem}
+.block .desc{font-size:.85rem;color:var(--text-on-ink);margin-bottom:.4rem}
+.block .hash{font-family:var(--mono);font-size:.68rem;color:var(--text-on-ink-dim);word-break:break-all}
+
+.empty{color:var(--text-on-ink-dim);font-size:.85rem;padding:.5rem 0}
+.demotools{margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--border-on-ink)}
+.demotools summary{font-size:.78rem;color:var(--text-on-ink-dim);cursor:pointer}
+.demotools .btnrow{margin-top:.7rem}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wordmark">Rental <em>Evidence Vault</em></div>
+  <div class="userchip hidden" id="userchip">
+    <span><b id="whoami"></b></span>
+    <span class="fp" id="myfp"></span>
+    <button class="ghostbtn" onclick="downloadKeyBackup()">Back up key</button>
+    <button class="ghostbtn" onclick="logout()">Log out</button>
+  </div>
+</div>
+
+<main>
+
+  <div id="keyBanner" class="keybanner hidden">This device does not hold your signing key, so you can read but not sign. Import your key backup: <input type="file" accept="application/json" onchange="importKeyFile(this)"></div>
+
+  <div id="authView" class="authwrap">
+    <div class="authtabs">
+      <div class="authtab active" id="tabLogin" onclick="setAuthMode('login')">Log in</div>
+      <div class="authtab" id="tabRegister" onclick="setAuthMode('register')">Create account</div>
+    </div>
+    <div class="panel">
+      <h2 id="authTitle">Welcome back</h2>
+      <div class="field">
+        <label>Username</label>
+        <input id="authUsername" placeholder="priya_tenant">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="authPassword" type="password" placeholder="••••••••">
+      </div>
+      <div class="field hidden" id="roleField">
+        <label>I am a</label>
+        <div class="roletoggle">
+          <div class="roleopt active" id="roleTenant" onclick="setRole('tenant')">Tenant</div>
+          <div class="roleopt" id="roleLandlord" onclick="setRole('landlord')">Landlord</div>
+        </div>
+      </div>
+      <button class="primarybtn" id="authSubmitBtn" onclick="submitAuth()">Log in</button>
+      <div id="authMsg"></div>
+    </div>
+  </div>
+
+  <div id="dashView" class="hidden">
+    <div class="dashhead">
+      <div>
+        <h2>Your leases</h2>
+        <p>Every lease keeps its own tamper-evident record.</p>
+      </div>
+    </div>
+
+    <div class="leaseformwrap hidden" id="leaseFormWrap">
+      <div class="formrow">
+        <div class="field"><label>Property address</label><input id="leaseAddress" placeholder="221B, Sector 14"></div>
+        <div class="field"><label>Tenant username</label><input id="leaseTenant" placeholder="priya_tenant"></div>
+      </div>
+      <div class="formrow">
+        <div class="field"><label>Monthly rent (optional)</label><input id="leaseRent" type="number" placeholder="18000"></div>
+        <div class="field"><label>Start date (optional)</label><input id="leaseStartDate" type="date"></div>
+      </div>
+      <div class="field"><label><input id="leaseDemo" type="checkbox" style="width:auto"> Demo lease (turns on the tamper simulator)</label></div>
+      <div class="btnrow">
+        <button class="primarybtn" style="width:auto" onclick="createLease()">Save lease</button>
+        <button class="ghostbtn" onclick="toggleLeaseForm(false)">Cancel</button>
+      </div>
+      <div id="leaseMsg"></div>
+    </div>
+
+    <div class="leasegrid" id="leaseGrid">
+      <div class="newleasecard" onclick="toggleLeaseForm(true)">
+        <div class="plus">+</div>
+        <div>Add a lease</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="leaseView" class="hidden">
+    <div class="backlink" onclick="showDashboard()">&larr; Your leases</div>
+
+    <div class="leasehead">
+      <div>
+        <h2 id="lv_address"></h2>
+        <div class="meta" id="lv_meta"></div>
+      </div>
+      <div class="btnrow" id="lv_endwrap"></div>
+    </div>
+
+    <div class="statrow" id="lv_stats"></div>
+    <div id="lv_verify" class="verifychip"></div>
+
+    <div class="section" id="lv_logsection">
+      <h3>Log a new event</h3>
+      <div class="formrow">
+        <div class="darkfield" style="flex:1;min-width:160px">
+          <label>Type</label>
+          <select id="eventType" onchange="onEventTypeChange()">
+            <option value="MOVE_IN">Move-in condition</option>
+            <option value="MOVE_OUT">Move-out condition</option>
+            <option value="PAYMENT">Payment</option>
+            <option value="MAINTENANCE">Maintenance complaint</option>
+            <option value="MAINTENANCE_UPDATE">Maintenance update</option>
+          </select>
+        </div>
+        <div class="darkfield hidden" id="amountWrap" style="flex:1;min-width:140px">
+          <label>Amount (₹)</label>
+          <input id="eventAmount" type="number" placeholder="18000">
+        </div>
+      </div>
+      <div class="darkfield">
+        <label>Details</label>
+        <input id="eventDesc" placeholder="e.g. small crack near window, otherwise clean">
+      </div>
+      <div class="darkfield">
+        <label>Photo (optional, max 5MB)</label>
+        <input id="eventPhoto" type="file" accept="image/*">
+      </div>
+      <button class="btn" onclick="proposeEvent()">Propose event</button>
+      <div id="eventMsg"></div>
+    </div>
+
+    <div class="section">
+      <h3>Awaiting confirmation</h3>
+      <div id="pendingList"></div>
+    </div>
+
+    <div class="section">
+      <h3>Evidence ledger</h3>
+      <div id="blockList"></div>
+      <div class="btnrow">
+        <button class="btn outline" onclick="verifyInBrowser()">Verify in my browser</button>
+        <button class="btn outline" onclick="verifyChain()">Ask the server to verify</button>
+        <button class="btn outline" onclick="downloadReceipt()">Download signed receipt</button>
+        <label class="btn outline">Check a receipt<input type="file" accept="application/json" onchange="checkReceipt(this)" hidden></label>
+        <button class="btn outline" onclick="exportPacket()">Export dispute packet</button>
+      </div>
+      <div id="chainMsg"></div>
+      <details class="demotools hidden" id="demoTools">
+        <summary>Demo tools: simulate an attack (demo leases only)</summary>
+        <div class="btnrow">
+          <button class="btn danger" onclick="tamperDemo(false)">Edit block 0</button>
+          <button class="btn danger" onclick="tamperDemo(true)">Edit block 0 and recompute every hash</button>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+let token = localStorage.getItem("rev_token");
+let username = localStorage.getItem("rev_username");
+let role = localStorage.getItem("rev_role");
+let currentLeaseId = null;
+let authMode = "login";
+let myPublicKey = localStorage.getItem("rev_pub");
+let lastDetail = null;
+const enc = new TextEncoder();
+
+function bytesToHex(buf) {
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function hexToBytes(hex) {
+  const out = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+
+function stableStringify(value) {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return "[" + value.map(stableStringify).join(",") + "]";
+  const keys = Object.keys(value).sort();
+  return "{" + keys.map((k) => JSON.stringify(k) + ":" + stableStringify(value[k])).join(",") + "}";
+}
+
+async function sha256Hex(bytes) {
+  return bytesToHex(await crypto.subtle.digest("SHA-256", bytes));
+}
+
+async function fingerprintOf(publicKeyHex) {
+  const digest = await sha256Hex(hexToBytes(publicKeyHex));
+  return digest.slice(0, 16).toUpperCase().match(/.{4}/g).join("-");
+}
+
+async function generateKeyPair() {
+  const pair = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]);
+  const spki = await crypto.subtle.exportKey("spki", pair.publicKey);
+  const jwk = await crypto.subtle.exportKey("jwk", pair.privateKey);
+  return { publicKey: bytesToHex(spki), jwk };
+}
+
+function storeKey(name, pair) {
+  localStorage.setItem("rev_key_" + name, JSON.stringify({ publicKey: pair.publicKey, jwk: pair.jwk }));
+}
+
+function storedKey() {
+  try { return JSON.parse(localStorage.getItem("rev_key_" + username)); } catch (e) { return null; }
+}
+
+function hasSigningKey() {
+  const k = storedKey();
+  return Boolean(k && k.publicKey === myPublicKey);
+}
+
+async function signMessage(message) {
+  if (!hasSigningKey()) throw new Error("This device does not hold your signing key. Import your key backup first.");
+  const key = await crypto.subtle.importKey("jwk", storedKey().jwk, { name: "Ed25519" }, false, ["sign"]);
+  return bytesToHex(await crypto.subtle.sign({ name: "Ed25519" }, key, enc.encode(message)));
+}
+
+async function verifyWith(publicKeyHex, message, signatureHex) {
+  try {
+    const key = await crypto.subtle.importKey("spki", hexToBytes(publicKeyHex), { name: "Ed25519" }, false, ["verify"]);
+    return await crypto.subtle.verify({ name: "Ed25519" }, key, hexToBytes(signatureHex), enc.encode(message));
+  } catch (e) {
+    return false;
+  }
+}
+
+function payloadFor(leaseId, ev) {
+  return { v: 1, leaseId, eventId: ev.id, type: ev.type, data: ev.data, proposedBy: ev.proposedBy, createdAt: ev.createdAt };
+}
+
+function downloadJson(name, obj) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" }));
+  const a = document.createElement("a");
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadKeyBackup() {
+  const k = storedKey();
+  if (!k || k.publicKey !== myPublicKey) { showToast("This device has no signing key to back up."); return; }
+  downloadJson(`rev-key-${username}.json`, { app: "rental-evidence-vault", username, publicKey: k.publicKey, jwk: k.jwk });
+}
+
+async function importKeyFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    if (parsed.username !== username || parsed.publicKey !== myPublicKey) throw new Error("This backup belongs to a different account.");
+    const key = await crypto.subtle.importKey("jwk", parsed.jwk, { name: "Ed25519" }, false, ["sign"]);
+    const sig = bytesToHex(await crypto.subtle.sign({ name: "Ed25519" }, key, enc.encode("check")));
+    if (!(await verifyWith(myPublicKey, "check", sig))) throw new Error("This key does not match your registered key.");
+    storeKey(username, { publicKey: parsed.publicKey, jwk: parsed.jwk });
+    renderKeyState();
+    showToast("Signing key imported.");
+  } catch (e) {
+    showToast(e.message || "Could not read that key file.");
+  }
+  input.value = "";
+}
+
+async function renderKeyState() {
+  document.getElementById("keyBanner").classList.toggle("hidden", hasSigningKey());
+  document.getElementById("myfp").textContent = myPublicKey ? "key " + (await fingerprintOf(myPublicKey)) : "";
+}
+
+function api(path, opts = {}) {
+  const isFormData = opts.body instanceof FormData;
+  const headers = Object.assign(isFormData ? {} : { "Content-Type": "application/json" }, opts.headers || {});
+  if (token) headers["Authorization"] = "Bearer " + token;
+  return fetch(path, Object.assign({}, opts, { headers })).then(async (r) => {
+    const body = await r.json().catch(() => ({}));
+    if (r.status === 401) {
+      logout();
+      showToast("Session expired. Please log in again.");
+      throw new Error("Session expired. Please log in again.");
+    }
+    if (!r.ok) throw new Error(body.error || "Request failed");
+    return body;
+  });
+}
+
+let toastTimer = null;
+function showToast(text) {
+  const el = document.getElementById("toast");
+  el.textContent = text;
+  el.style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.display = "none"; }, 4000);
+}
+
+window.addEventListener("unhandledrejection", (e) => {
+  e.preventDefault();
+  showToast(e.reason && e.reason.message ? e.reason.message : "Something went wrong");
+});
+
+function shrinkImage(file, maxSide, quality) {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith("image/") || file.type === "image/gif") return resolve(file);
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => resolve(blob || file), "image/jpeg", quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
+async function hydratePhotos() {
+  const imgs = document.querySelectorAll("img[data-photo]");
+  for (const img of imgs) {
+    if (img.src) continue;
+    try {
+      const r = await fetch(`/api/leases/${currentLeaseId}/photos/${img.dataset.photo}`, { headers: { Authorization: "Bearer " + token } });
+      if (!r.ok) continue;
+      img.src = URL.createObjectURL(await r.blob());
+    } catch (e) {}
+  }
+}
+
+async function verifyPhoto(photoId, resultId) {
+  const el = document.getElementById(resultId);
+  try {
+    const res = await api(`/api/leases/${currentLeaseId}/photos/${photoId}/verify`);
+    const ok = res.matchesStoredHash && res.inChain && res.matchesChainHash;
+    el.textContent = (ok ? "Verified: the stored image matches the hash sealed in block #" + res.blockIndex + "." : "Mismatch: this image no longer matches its recorded hash.") + " Recomputed " + res.recomputedHash.slice(0, 24) + "...";
+    el.style.color = ok ? "#7fb069" : "#e07a7a";
+  } catch (e) {
+    el.textContent = e.message;
+  }
+}
+
+function showMsg(elId, text, ok) {
+  const el = document.getElementById(elId);
+  el.className = "inlinemsg " + (ok ? "ok" : "bad");
+  el.textContent = text;
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  document.getElementById("tabLogin").classList.toggle("active", mode === "login");
+  document.getElementById("tabRegister").classList.toggle("active", mode === "register");
+  document.getElementById("roleField").classList.toggle("hidden", mode !== "register");
+  document.getElementById("authTitle").textContent = mode === "login" ? "Welcome back" : "Create your account";
+  document.getElementById("authSubmitBtn").textContent = mode === "login" ? "Log in" : "Create account";
+  document.getElementById("authMsg").textContent = "";
+}
+
+let selectedRole = "tenant";
+function setRole(r) {
+  selectedRole = r;
+  document.getElementById("roleTenant").classList.toggle("active", r === "tenant");
+  document.getElementById("roleLandlord").classList.toggle("active", r === "landlord");
+}
+
+async function submitAuth() {
+  const u = document.getElementById("authUsername").value.trim();
+  const p = document.getElementById("authPassword").value;
+  if (!u || !p) { showMsg("authMsg", "Username and password are required.", false); return; }
+  try {
+    if (authMode === "register") {
+      const pair = await generateKeyPair();
+      await api("/api/auth/register", { method: "POST", body: JSON.stringify({ username: u, password: p, role: selectedRole, publicKey: pair.publicKey }) });
+      storeKey(u, pair);
+      showMsg("authMsg", "Account created. Your signing key was made in this browser. Logging you in...", true);
+    }
+    const res = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ username: u, password: p }) });
+    token = res.token; username = res.username; role = res.role; myPublicKey = res.publicKey;
+    localStorage.setItem("rev_pub", myPublicKey);
+    localStorage.setItem("rev_token", token);
+    localStorage.setItem("rev_username", username);
+    localStorage.setItem("rev_role", role);
+    enterApp();
+  } catch (e) {
+    showMsg("authMsg", e.message, false);
+  }
+}
+
+function logout() {
+  localStorage.removeItem("rev_token");
+  localStorage.removeItem("rev_username");
+  localStorage.removeItem("rev_role");
+  localStorage.removeItem("rev_pub");
+  lastDetail = null;
+  token = null; username = null; role = null; currentLeaseId = null;
+  document.getElementById("authView").classList.remove("hidden");
+  document.getElementById("dashView").classList.add("hidden");
+  document.getElementById("leaseView").classList.add("hidden");
+  document.getElementById("userchip").classList.add("hidden");
+}
+
+function enterApp() {
+  document.getElementById("authView").classList.add("hidden");
+  document.getElementById("userchip").classList.remove("hidden");
+  document.getElementById("whoami").textContent = username + " · " + role;
+  renderKeyState();
+  showDashboard().catch(() => {});
+}
+
+async function showDashboard() {
+  document.getElementById("leaseView").classList.add("hidden");
+  document.getElementById("dashView").classList.remove("hidden");
+  toggleLeaseForm(false);
+  currentLeaseId = null;
+  const leases = await api("/api/leases");
+  const grid = document.getElementById("leaseGrid");
+  const cards = leases.map((l) => {
+    const other = l.tenantUsername === username ? l.landlordUsername : l.tenantUsername;
+    const rent = l.rentAmount ? "₹" + l.rentAmount + "/mo · " + l.rent.status : "rent not set";
+    return `<div class="leasecard ${l.status === "ended" ? "ended" : ""}" onclick="openLease('${l.id}')">
+      <span class="badge ${l.status}">${l.status}</span>
+      <h3>${escapeHtml(l.address)}</h3>
+      <div class="meta">With ${escapeHtml(other)}<br>${rent}</div>
+    </div>`;
+  }).join("");
+  const addCard = role === "landlord"
+    ? `<div class="newleasecard" onclick="toggleLeaseForm(true)"><div class="plus">+</div><div>Add a lease</div></div>`
+    : (leases.length === 0 ? `<div class="empty">No leases yet. Your landlord will add one for you.</div>` : "");
+  grid.innerHTML = cards + addCard;
+}
+
+function toggleLeaseForm(show) {
+  document.getElementById("leaseFormWrap").classList.toggle("hidden", !show);
+}
+
+async function createLease() {
+  const address = document.getElementById("leaseAddress").value.trim();
+  const tenantUsername = document.getElementById("leaseTenant").value.trim();
+  const rentAmount = document.getElementById("leaseRent").value.trim();
+  const startDate = document.getElementById("leaseStartDate").value;
+  const demo = document.getElementById("leaseDemo").checked;
+  try {
+    await api("/api/leases", {
+      method: "POST",
+      body: JSON.stringify({ address, tenantUsername, rentAmount, startDate, demo }),
+    });
+    showMsg("leaseMsg", "Lease saved.", true);
+    showDashboard();
+  } catch (e) {
+    showMsg("leaseMsg", e.message, false);
+  }
+}
+
+async function openLease(id) {
+  currentLeaseId = id;
+  document.getElementById("dashView").classList.add("hidden");
+  document.getElementById("leaseView").classList.remove("hidden");
+  await refreshLeaseView();
+}
+
+async function refreshLeaseView() {
+  const detail = await api(`/api/leases/${currentLeaseId}`);
+  lastDetail = detail;
+  renderLeaseHead(detail.lease, detail.fingerprints);
+  renderStats(detail.lease, detail.chain.blocks, detail.pendingEvents, detail.rent);
+  renderPending(detail.pendingEvents, detail.lease);
+  renderBlocks(detail.chain.blocks);
+  hydratePhotos();
+  runSilentVerify(detail);
+}
+
+function renderLeaseHead(lease, fingerprints) {
+  document.getElementById("lv_address").textContent = lease.address;
+  const rent = lease.rentAmount ? "₹" + lease.rentAmount + "/month" : "rent not set";
+  const start = lease.startDate || "start date not set";
+  document.getElementById("lv_meta").innerHTML =
+    `<b>${escapeHtml(lease.tenantUsername)}</b> (tenant) &nbsp;&middot;&nbsp; <b>${escapeHtml(lease.landlordUsername)}</b> (landlord) &nbsp;&middot;&nbsp; ${rent} &nbsp;&middot;&nbsp; ${start}` +
+    `<div class="keyfps">key ${escapeHtml(fingerprints[lease.tenantUsername])} (${escapeHtml(lease.tenantUsername)}) &middot; key ${escapeHtml(fingerprints[lease.landlordUsername])} (${escapeHtml(lease.landlordUsername)}) &middot; each of you should see the other's key fingerprint match on their own screen</div>`;
+  document.getElementById("demoTools").classList.toggle("hidden", !lease.demo);
+
+  const endwrap = document.getElementById("lv_endwrap");
+  const logsection = document.getElementById("lv_logsection");
+  if (lease.status === "active") {
+    endwrap.innerHTML = `<button class="btn danger" onclick="endLease()">End lease</button>`;
+    logsection.classList.remove("hidden");
+  } else {
+    endwrap.innerHTML = `<span class="badge ended">lease ended</span>`;
+    logsection.classList.add("hidden");
+  }
+}
+
+function renderStats(lease, blocks, pending, rent) {
+  const totalPaid = blocks.filter((b) => b.type === "PAYMENT" && b.data.amount)
+    .reduce((sum, b) => sum + Number(b.data.amount), 0);
+  const needsMe = pending.filter((e) => !e.confirmedBy.includes(username)).length;
+  const rentColors = { Paid: "var(--forest)", Due: "var(--awaiting)", Overdue: "var(--brick)" };
+  const rentStatus = { text: rent.status, color: rentColors[rent.status] || "var(--text-on-ink-dim)" };
+  const stats = [
+    { num: rentStatus.text, lbl: "rent this month", color: rentStatus.color },
+    { num: blocks.length, lbl: "events recorded" },
+    { num: totalPaid ? "₹" + totalPaid.toLocaleString("en-IN") : "—", lbl: "total paid logged" },
+    { num: needsMe, lbl: "waiting on you" },
+    { num: lease.status, lbl: "lease status" },
+  ];
+  document.getElementById("lv_stats").innerHTML = stats.map((s) =>
+    `<div class="stat"><div class="num" style="${s.color ? "color:" + s.color : ""}">${s.num}</div><div class="lbl">${s.lbl}</div></div>`
+  ).join("");
+}
+
+function onEventTypeChange() {
+  const isPayment = document.getElementById("eventType").value === "PAYMENT";
+  document.getElementById("amountWrap").classList.toggle("hidden", !isPayment);
+}
+
+async function proposeEvent() {
+  const type = document.getElementById("eventType").value;
+  const description = document.getElementById("eventDesc").value.trim();
+  const amount = document.getElementById("eventAmount").value;
+  let photoFile = document.getElementById("eventPhoto").files[0];
+  const data = { description };
+  if (type === "PAYMENT" && amount) data.amount = Number(amount);
+
+  try {
+    if (photoFile) {
+      photoFile = await shrinkImage(photoFile, 1600, 0.8);
+      data.photoHash = await sha256Hex(await photoFile.arrayBuffer());
+    }
+    const id = "evt-" + bytesToHex(crypto.getRandomValues(new Uint8Array(4)));
+    const createdAt = new Date().toISOString();
+    const payload = payloadFor(currentLeaseId, { id, type, data, proposedBy: username, createdAt });
+    const signature = await signMessage(stableStringify(payload));
+
+    let body;
+    if (photoFile) {
+      body = new FormData();
+      body.append("type", type);
+      body.append("id", id);
+      body.append("createdAt", createdAt);
+      body.append("signature", signature);
+      body.append("data", JSON.stringify(data));
+      body.append("photo", photoFile, "photo.jpg");
+    } else {
+      body = JSON.stringify({ type, id, createdAt, signature, data });
+    }
+    await api(`/api/leases/${currentLeaseId}/events`, { method: "POST", body });
+    showMsg("eventMsg", "Event signed and proposed. Waiting for the other party to confirm.", true);
+    document.getElementById("eventDesc").value = "";
+    document.getElementById("eventAmount").value = "";
+    document.getElementById("eventPhoto").value = "";
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("eventMsg", e.message, false);
+  }
+}
+
+async function confirmEvent(eventId) {
+  try {
+    const ev = lastDetail.pendingEvents.find((x) => x.id === eventId);
+    const message = stableStringify(payloadFor(currentLeaseId, ev));
+    const proposerKey = lastDetail.publicKeys[ev.proposedBy];
+    if (!(await verifyWith(proposerKey, message, ev.proposerSignature))) {
+      throw new Error("The proposer's signature on this event does not verify. Do not confirm it.");
+    }
+    if (ev.photoId) {
+      const r = await fetch(`/api/leases/${currentLeaseId}/photos/${ev.photoId}`, { headers: { Authorization: "Bearer " + token } });
+      const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
+      if (hash !== ev.data.photoHash) throw new Error("The photo on the server does not match the hash the proposer signed. Do not confirm it.");
+    }
+    const signature = await signMessage(message);
+    await api(`/api/leases/${currentLeaseId}/events/${eventId}/confirm`, { method: "POST", body: JSON.stringify({ signature }) });
+    showMsg("eventMsg", "Signed by both parties and added to the ledger.", true);
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("eventMsg", e.message, false);
+  }
+}
+
+function renderPending(events, lease) {
+  const el = document.getElementById("pendingList");
+  if (events.length === 0) { el.innerHTML = `<div class="empty">Nothing waiting on confirmation.</div>`; return; }
+  el.innerHTML = events.map((e) => {
+    const needs = [lease.tenantUsername, lease.landlordUsername].filter((u) => !e.confirmedBy.includes(u));
+    const mine = e.proposedBy === username;
+    const amountStr = e.data.amount ? ` &middot; ₹${e.data.amount}` : "";
+    const photoHtml = e.photoId ? `<img data-photo="${e.photoId}" class="evphoto" alt="evidence photo">` : "";
+    return `<div class="evcard">
+      <div class="top"><span class="evtype">${e.type.replace("_", " ").toLowerCase()}</span><span class="badge pending">pending</span></div>
+      ${photoHtml}
+      <div class="evdesc">${escapeHtml(e.data.description || "")}${amountStr}</div>
+      <div class="evwho">Proposed by <b>${escapeHtml(e.proposedBy)}</b> &middot; waiting on ${needs.join(", ") || "finalizing"}</div>
+      ${mine ? "" : `<div class="btnrow"><button class="btn" onclick="confirmEvent('${e.id}')">Check and sign this</button></div>`}
+    </div>`;
+  }).join("");
+}
+
+function renderBlocks(blocks) {
+  const el = document.getElementById("blockList");
+  if (blocks.length === 0) { el.innerHTML = `<div class="empty">No confirmed events yet.</div>`; return; }
+  el.innerHTML = blocks.slice().reverse().map((b) => {
+    const amountStr = b.data.amount ? ` &middot; ₹${b.data.amount}` : "";
+    const photoHtml = b.photoId
+      ? `<img data-photo="${b.photoId}" class="evphoto" alt="evidence photo"><div class="hash" title="${b.data.photoHash}">photo hash: ${b.data.photoHash.slice(0, 24)}...</div>
+         <div class="btnrow"><button class="btn" onclick="verifyPhoto('${b.photoId}', 'pv-${b.index}')">Verify photo</button></div>
+         <div class="pvres" id="pv-${b.index}"></div>`
+      : "";
+    return `<div class="block">
+      <div class="top"><span class="idx">#${b.index}</span><span class="badge active">${b.type.replace("_", " ").toLowerCase()}</span></div>
+      ${photoHtml}
+      <div class="desc">${escapeHtml(b.data.description || "")}${amountStr}</div>
+      <div class="sigs">signed by ${escapeHtml(b.proposedBy)} and ${escapeHtml(b.confirmedBy)} &middot; ${escapeHtml(b.finalizedAt.slice(0, 16).replace("T", " "))} UTC</div>
+      <div class="hash" title="${b.blockHash}">block hash: ${b.blockHash.slice(0, 24)}...</div>
+    </div>`;
+  }).join("");
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+async function endLease() {
+  if (!confirm("End this lease? Its history stays visible, but no new events can be logged.")) return;
+  try {
+    await api(`/api/leases/${currentLeaseId}/end`, { method: "POST" });
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("eventMsg", e.message, false);
+  }
+}
+
+async function verifyChain() {
+  try {
+    const res = await api(`/api/leases/${currentLeaseId}/chain/verify`);
+    showMsg("chainMsg", res.valid ? "Valid — no tampering detected across the whole ledger." : `Invalid — ${res.reason}`, res.valid);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function tamperDemo(rehash) {
+  try {
+    const res = await api(`/api/leases/${currentLeaseId}/chain/demo-tamper`, { method: "POST", body: JSON.stringify({ blockIndex: 0, rehash }) });
+    showMsg("chainMsg", res.message, false);
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function exportPacket() {
+  try {
+    const res = await fetch(`/api/leases/${currentLeaseId}/chain/export`, { headers: { Authorization: "Bearer " + token } });
+    if (!res.ok) throw new Error((await res.json()).error || "Export failed");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `dispute-export-${currentLeaseId}.json`; a.click();
+    URL.revokeObjectURL(url);
+    showMsg("chainMsg", "Dispute export packet downloaded.", true);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function clientVerify(detail, withPhotos) {
+  const { lease, chain, publicKeys } = detail;
+  const parties = [lease.tenantUsername, lease.landlordUsername];
+  let prev = "0".repeat(64);
+  let photosChecked = 0;
+  for (const b of chain.blocks) {
+    const bad = (reason) => ({ valid: false, index: b.index, reason: `Block ${b.index}: ${reason}` });
+    if (b.prevHash !== prev) return bad("does not link to the previous block.");
+    const message = stableStringify(payloadFor(lease.id, { id: b.eventId, type: b.type, data: b.data, proposedBy: b.proposedBy, createdAt: b.createdAt }));
+    if ((await sha256Hex(enc.encode(message))) !== b.dataHash) return bad("the recorded event data does not match its hash.");
+    const blockHash = await sha256Hex(enc.encode(stableStringify({
+      index: b.index, finalizedAt: b.finalizedAt, photoId: b.photoId, confirmedBy: b.confirmedBy,
+      proposerSignature: b.proposerSignature, confirmerSignature: b.confirmerSignature, prevHash: b.prevHash, dataHash: b.dataHash,
+    })));
+    if (blockHash !== b.blockHash) return bad("the stored block hash is inconsistent with its contents.");
+    if (b.proposedBy === b.confirmedBy || !parties.includes(b.proposedBy) || !parties.includes(b.confirmedBy)) {
+      return bad("signers are not the two parties of this lease.");
+    }
+    if (!(await verifyWith(publicKeys[b.proposedBy], message, b.proposerSignature))) return bad(`the signature of ${b.proposedBy} does not verify.`);
+    if (!(await verifyWith(publicKeys[b.confirmedBy], message, b.confirmerSignature))) return bad(`the signature of ${b.confirmedBy} does not verify.`);
+    if (withPhotos && b.photoId) {
+      const r = await fetch(`/api/leases/${lease.id}/photos/${b.photoId}`, { headers: { Authorization: "Bearer " + token } });
+      const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
+      if (hash !== b.data.photoHash) return bad("the stored photo no longer matches the hash that was signed.");
+      photosChecked++;
+    }
+    prev = b.blockHash;
+  }
+  return { valid: true, blocks: chain.blocks.length, photosChecked };
+}
+
+function headKey(leaseId) {
+  return "rev_head_" + username + "_" + leaseId;
+}
+
+function checkRollback(detail) {
+  let seen = null;
+  try { seen = JSON.parse(localStorage.getItem(headKey(detail.lease.id))); } catch (e) {}
+  if (!seen) return null;
+  const block = detail.chain.blocks[seen.index];
+  if (!block || block.blockHash !== seen.blockHash) {
+    return `The server's record no longer contains block #${seen.index} that you last saw. History has been removed or rewritten.`;
+  }
+  return null;
+}
+
+function rememberHead(detail) {
+  const blocks = detail.chain.blocks;
+  if (blocks.length === 0) return;
+  const head = blocks[blocks.length - 1];
+  try { localStorage.setItem(headKey(detail.lease.id), JSON.stringify({ index: head.index, blockHash: head.blockHash })); } catch (e) {}
+}
+
+async function runSilentVerify(detail) {
+  const chip = document.getElementById("lv_verify");
+  const result = await clientVerify(detail, false);
+  const rollback = checkRollback(detail);
+  if (!result.valid) {
+    chip.className = "verifychip bad";
+    chip.textContent = "Warning: your browser checked every hash and signature and found a problem. " + result.reason;
+  } else if (rollback) {
+    chip.className = "verifychip bad";
+    chip.textContent = "Warning: " + rollback;
+  } else {
+    chip.className = "verifychip ok";
+    chip.textContent = result.blocks === 0
+      ? "No events yet. Everything recorded here will be signed by both of you."
+      : `Checked in your browser: all ${result.blocks} events have valid hashes and valid signatures from both parties.`;
+    rememberHead(detail);
+  }
+}
+
+async function verifyInBrowser() {
+  try {
+    const detail = await api(`/api/leases/${currentLeaseId}`);
+    const result = await clientVerify(detail, true);
+    const rollback = checkRollback(detail);
+    if (!result.valid) showMsg("chainMsg", "Invalid: " + result.reason, false);
+    else if (rollback) showMsg("chainMsg", "Invalid: " + rollback, false);
+    else showMsg("chainMsg", `Valid. Your browser re-checked ${result.blocks} events, all signatures and ${result.photosChecked} photos without trusting the server.`, true);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function downloadReceipt() {
+  try {
+    const detail = await api(`/api/leases/${currentLeaseId}`);
+    const blocks = detail.chain.blocks;
+    if (blocks.length === 0) throw new Error("There is nothing to put on a receipt yet.");
+    const head = blocks[blocks.length - 1];
+    const receipt = { v: 1, kind: "head-receipt", leaseId: detail.lease.id, headIndex: head.index, headHash: head.blockHash, issuedAt: new Date().toISOString(), signer: username };
+    const signature = await signMessage(stableStringify(receipt));
+    downloadJson(`receipt-${detail.lease.id}-${head.index}.json`, { receipt, signature, publicKey: myPublicKey, fingerprint: await fingerprintOf(myPublicKey) });
+    showMsg("chainMsg", "Receipt signed with your key and downloaded. Keep it: it proves what the record looked like today.", true);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function checkReceipt(input) {
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    const detail = await api(`/api/leases/${currentLeaseId}`);
+    const r = parsed.receipt;
+    if (r.leaseId !== detail.lease.id) throw new Error("This receipt is for a different lease.");
+    if (detail.publicKeys[r.signer] !== parsed.publicKey) throw new Error("The receipt's key is not the registered key of " + r.signer + ".");
+    if (!(await verifyWith(parsed.publicKey, stableStringify(r), parsed.signature))) throw new Error("The receipt's signature is not valid.");
+    const block = detail.chain.blocks[r.headIndex];
+    if (!block || block.blockHash !== r.headHash) {
+      showMsg("chainMsg", `The receipt is genuine, but the record no longer matches it: block #${r.headIndex} is missing or different. History was changed after ${r.issuedAt}.`, false);
+    } else {
+      showMsg("chainMsg", `The receipt is genuine and the record still matches it up to block #${r.headIndex}.`, true);
+    }
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+  input.value = "";
+}
+
+if (token) { enterApp(); }
+</script>
+</body>
+</html>
