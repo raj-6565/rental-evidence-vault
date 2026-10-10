@@ -5,6 +5,7 @@
 <title>Rental Evidence Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A shared rental record that both tenant and landlord sign, so move-in condition, rent and repairs can't be disputed later.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23166534'/%3E%3Cpath d='M7 15.5L16 8l9 7.5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M9.5 14v9h13v-9' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12.6 18.2l2.6 2.6 4.4-4.9' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +16,12 @@
 <header class="site-header">
   <div class="container header-inner">
     <a class="brand" href="/" onclick="go('/', event)">
-      <span class="brand-mark" aria-hidden="true"></span>
+      <svg class="brand-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+        <rect width="32" height="32" rx="8" class="bm-bg"/>
+        <path d="M7 15.5L16 8l9 7.5" class="bm-line"/>
+        <path d="M9.5 14v9h13v-9" class="bm-line"/>
+        <path d="M12.6 18.2l2.6 2.6 4.4-4.9" class="bm-line"/>
+      </svg>
       <span>Rental Evidence Vault</span>
     </a>
     <nav class="header-nav" id="headerNav"></nav>
@@ -27,13 +33,18 @@
 <section id="landingView" class="hidden">
   <div class="hero">
     <div class="container hero-inner">
-      <p class="eyebrow">For tenants and landlords</p>
-      <h1>Rental records your landlord can't dispute — and neither can you.</h1>
-      <p class="lead">Every move-in photo, rent payment and repair is signed by both tenant and landlord, then locked. Nobody can quietly change it later, and either of you can check it at any time.</p>
+      <p class="eyebrow">Tenancy records for tenants and landlords</p>
+      <h1>One shared, signed record of every tenancy.</h1>
+      <p class="lead">Document move-in condition, rent payments and repairs together. Each entry is confirmed and digitally signed by both parties, so the record stays accurate, and any later change to it can be detected.</p>
       <div class="hero-actions">
         <a class="btn btn-primary btn-lg" href="/login?mode=register" onclick="go('/login?mode=register', event)">Get started</a>
-        <button class="btn btn-secondary btn-lg" onclick="openSamplePacket()">See a sample dispute packet</button>
+        <a class="btn btn-secondary btn-lg" href="#how" onclick="goSection('how', event)">How it works</a>
       </div>
+      <ul class="hero-points">
+        <li>Signed by both parties</li>
+        <li>Checked in your own browser</li>
+        <li>No blockchain, wallet or fees</li>
+      </ul>
     </div>
   </div>
 
@@ -55,6 +66,27 @@
           <span class="step-no">3</span>
           <h3>Locked and exportable</h3>
           <p>Verify the record whenever you like, and export a dispute packet if you ever need one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="simple">
+    <div class="container">
+      <h2 class="section-title">Simple to use, because there is no blockchain</h2>
+      <p class="section-lead">Many digital record systems ask you to set up a crypto wallet, pay transaction fees and wait for confirmations. Rental Evidence Vault does none of that. You sign up with a username and password, add an entry, and the other person signs it. Your browser handles the digital signing in the background, using standard, well-established signature technology.</p>
+      <div class="simple-grid">
+        <div class="simple-item">
+          <h3>No wallet, no crypto</h3>
+          <p>Sign up in a minute. There is nothing to buy, install or keep track of beyond your login.</p>
+        </div>
+        <div class="simple-item">
+          <h3>No fees, no waiting</h3>
+          <p>Entries are saved straight away. There are no transaction fees and no confirmation delays.</p>
+        </div>
+        <div class="simple-item">
+          <h3>Private by default</h3>
+          <p>Only the two of you can see a lease and its photos. Nothing is published on a public network.</p>
         </div>
       </div>
     </div>
@@ -696,23 +728,6 @@ function openInfo(kind) {
   openModal(modalHead(title) + `<div class="modal-body">${body}</div>`);
 }
 
-function openSamplePacket() {
-  const sample = {
-    generatedAt: "2026-10-10T09:30:00.000Z",
-    lease: { id: "lease-1a2b3c4d", address: "221B, Sector 14, Jaipur", tenant: "priya_tenant", landlord: "arjun_landlord" },
-    fingerprints: { priya_tenant: "9F3A-07C1-52DE-B8A4", arjun_landlord: "41C7-D2E9-0B6F-83AA" },
-    integrityCheck: { valid: true },
-    blocks: [{
-      index: 0, type: "MOVE_IN", data: { description: "Hairline crack on bedroom window", photoHash: "e3b0c442…" },
-      proposedBy: "priya_tenant", confirmedBy: "arjun_landlord",
-      proposerSignature: "7c41…", confirmerSignature: "a9d2…",
-      prevHash: "0000…0000", blockHash: "5d2b…"
-    }],
-    howToVerify: "Rebuild each block's payload, check its SHA-256 and both signatures against the listed public keys, then check the hash links."
-  };
-  openModal(modalHead("Sample dispute packet") + `<div class="modal-body"><p class="muted">An example of the file you can export from a lease. The values here are shortened and made up.</p><pre class="code">${escapeHtml(JSON.stringify(sample, null, 2))}</pre><p>Anyone with this file can follow the "howToVerify" steps and check every signature on their own computer.</p></div>`, true);
-}
-
 async function openMyFingerprint() {
   const fp = myPublicKey ? await fingerprintOf(myPublicKey) : "not available";
   openModal(modalHead("Your key fingerprint") + `<div class="modal-body"><p>This short code identifies the key on your device. The person you share a lease with can compare it with what they see for you.</p><div class="fp-box mono">${escapeHtml(fp)}</div><div class="btn-row"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div></div>`);
@@ -1143,39 +1158,42 @@ function renderPending(events, lease) {
   document.getElementById("pendingThem").innerHTML = them.map((e) => pendingCard(e, true, lease)).join("");
 }
 
+function timelineItem(b) {
+  const kind = eventKind(b.type, b.data.description);
+  const amount = b.data.amount ? ` · ${fmtMoney(b.data.amount)}` : "";
+  const img = `<img data-photo="${b.photoId}" alt="Evidence photo">`;
+  const photo = b.photoId ? `<div class="thumb-row"><button class="thumb-btn" onclick="openLightbox(this)" aria-label="Open photo">${img}</button></div>` : "";
+  const photoTech = b.photoId
+    ? `<div class="tech-row"><span class="muted">Photo hash</span><span class="mono" title="${b.data.photoHash}">${b.data.photoHash.slice(0, 24)}…</span></div>
+       <div class="btn-row tight"><button class="btn btn-secondary btn-sm" onclick="verifyPhoto('${b.photoId}', 'pv-${b.index}')">Verify photo</button></div>
+       <div class="pvres" id="pv-${b.index}"></div>`
+    : "";
+  return `<div class="tl-item">
+    <div class="tl-date"><strong>${fmtDate(b.finalizedAt)}</strong><span class="muted small">${new Date(b.finalizedAt).toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit" })}</span></div>
+    <div class="tl-rail" aria-hidden="true"><span class="tl-dot"></span></div>
+    <div class="card event-card tl-card">
+      <div class="event-top"><span class="kind">${icon(kind.icon, 16)} ${kind.label}</span><span class="signed">${icon("checks", 16)} Signed by both</span></div>
+      ${photo}
+      <p class="event-text">${escapeHtml(kind.text)}${amount}</p>
+      <details class="tech">
+        <summary>Signing details</summary>
+        <div class="tech-row"><span class="muted">Sent by</span><span>${escapeHtml(displayName(b.proposedBy))}</span></div>
+        <div class="tech-row"><span class="muted">Confirmed by</span><span>${escapeHtml(displayName(b.confirmedBy))}</span></div>
+        <div class="tech-row"><span class="muted">Locked</span><span>${fmtDateTime(b.finalizedAt)}</span></div>
+        <div class="tech-row"><span class="muted">Entry no.</span><span>#${b.index}</span></div>
+        <div class="tech-row"><span class="muted">Block hash</span><span class="mono" title="${b.blockHash}">${b.blockHash.slice(0, 24)}…</span></div>
+        ${photoTech}
+      </details>
+    </div>
+  </div>`;
+}
+
 function renderBlocks(blocks) {
   const wrap = document.getElementById("ledgerWrap");
   wrap.classList.toggle("hidden", blocks.length === 0);
   const el = document.getElementById("blockList");
   if (blocks.length === 0) { el.innerHTML = ""; return; }
-  el.innerHTML = blocks.slice().reverse().map((b) => {
-    const kind = eventKind(b.type, b.data.description);
-    const amount = b.data.amount ? ` · ${fmtMoney(b.data.amount)}` : "";
-    const photo = b.photoId ? `<div class="thumb-row"><button class="thumb-btn" onclick="openLightbox(this)" aria-label="Open photo"><img data-photo="${b.photoId}" alt="Evidence photo"></button></div>` : "";
-    const photoTech = b.photoId
-      ? `<div class="tech-row"><span class="muted">Photo hash</span><span class="mono" title="${b.data.photoHash}">${b.data.photoHash.slice(0, 24)}…</span></div>
-         <div class="btn-row tight"><button class="btn btn-secondary btn-sm" onclick="verifyPhoto('${b.photoId}', 'pv-${b.index}')">Verify photo</button></div>
-         <div class="pvres" id="pv-${b.index}"></div>`
-      : "";
-    return `<div class="tl-item">
-      <div class="tl-date"><strong>${fmtDate(b.finalizedAt)}</strong><span class="muted small">${new Date(b.finalizedAt).toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit" })}</span></div>
-      <div class="tl-rail" aria-hidden="true"><span class="tl-dot"></span></div>
-      <div class="card event-card tl-card">
-        <div class="event-top"><span class="kind">${icon(kind.icon, 16)} ${kind.label}</span><span class="signed">${icon("checks", 16)} Signed by both</span></div>
-        ${photo}
-        <p class="event-text">${escapeHtml(kind.text)}${amount}</p>
-        <details class="tech">
-          <summary>Signing details</summary>
-          <div class="tech-row"><span class="muted">Sent by</span><span>${escapeHtml(displayName(b.proposedBy))}</span></div>
-          <div class="tech-row"><span class="muted">Confirmed by</span><span>${escapeHtml(displayName(b.confirmedBy))}</span></div>
-          <div class="tech-row"><span class="muted">Locked</span><span>${fmtDateTime(b.finalizedAt)}</span></div>
-          <div class="tech-row"><span class="muted">Entry no.</span><span>#${b.index}</span></div>
-          <div class="tech-row"><span class="muted">Block hash</span><span class="mono" title="${b.blockHash}">${b.blockHash.slice(0, 24)}…</span></div>
-          ${photoTech}
-        </details>
-      </div>
-    </div>`;
-  }).join("");
+  el.innerHTML = blocks.slice().reverse().map((b) => timelineItem(b)).join("");
 }
 
 function openLightbox(btn) {
