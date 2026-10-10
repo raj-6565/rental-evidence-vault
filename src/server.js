@@ -14,6 +14,9 @@ process.on("unhandledRejection", (err) => {
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
+app.get(["/login", "/app"], (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/leases", leasesRouter);
