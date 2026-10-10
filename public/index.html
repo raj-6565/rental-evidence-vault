@@ -4,284 +4,325 @@
 <meta charset="UTF-8">
 <title>Rental Evidence Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A shared rental record that both tenant and landlord sign, so move-in condition, rent and repairs can't be disputed later.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ink:#1c1712; --ink-2:#241d16; --ink-3:#2c2419;
-  --paper:#f3ead9; --paper-2:#e9dcc2;
-  --text-on-ink:#e9ddc8; --text-on-ink-dim:#a89a82;
-  --text-on-paper:#241c12; --text-on-paper-dim:#6b5d48;
-  --brass:#c08936; --brass-dark:#9c6d28;
-  --forest:#3f6e4b; --forest-bg:#24301f;
-  --brick:#a8452f; --brick-bg:#301e1a;
-  --awaiting:#5c7a93; --awaiting-bg:#1f2a30;
-  --border-on-ink:#3a3024; --border-on-paper:#d8c7a2;
-  --radius:10px; --radius-sm:6px;
-  --serif:'Source Serif 4',Georgia,serif;
-  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
-  --mono:'SF Mono',Consolas,'Liberation Mono',monospace;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--ink);color:var(--text-on-ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:var(--serif);margin:0}
-a{color:var(--brass)}
-
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2rem;border-bottom:1px solid var(--border-on-ink)}
-.wordmark{font-family:var(--serif);font-size:1.25rem;font-weight:600;letter-spacing:.01em}
-.wordmark em{font-style:normal;color:var(--brass)}
-.userchip{display:flex;align-items:center;gap:.9rem;font-size:.85rem;color:var(--text-on-ink-dim)}
-.userchip b{color:var(--text-on-ink);font-weight:600}
-.ghostbtn{background:none;border:1px solid var(--border-on-ink);color:var(--text-on-ink-dim);padding:.45rem .9rem;border-radius:var(--radius-sm);font-size:.82rem;cursor:pointer}
-.ghostbtn:hover{border-color:var(--brass);color:var(--text-on-ink)}
-
-main{max-width:980px;margin:0 auto;padding:2.5rem 2rem 5rem}
-.hidden{display:none !important}
-
-.authwrap{max-width:420px;margin:4rem auto 0}
-.authtabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
-.authtab{flex:1;text-align:center;padding:.7rem;border-radius:var(--radius-sm);cursor:pointer;font-size:.9rem;color:var(--text-on-ink-dim);border:1px solid var(--border-on-ink)}
-.authtab.active{background:var(--paper);color:var(--text-on-paper);border-color:var(--paper);font-weight:600}
-.panel{background:var(--paper);color:var(--text-on-paper);border-radius:var(--radius);padding:1.8rem;box-shadow:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.28)}
-.panel h2{font-size:1.3rem;margin-bottom:1.3rem}
-.field{margin-bottom:1rem}
-.field label{display:block;font-size:.78rem;color:var(--text-on-paper-dim);margin-bottom:.35rem}
-.field input,.field select{width:100%;padding:.6rem .7rem;border:1px solid var(--border-on-paper);border-radius:var(--radius-sm);background:#fff;color:var(--text-on-paper);font-size:.92rem;font-family:var(--sans)}
-.roletoggle{display:flex;gap:.6rem}
-.roleopt{flex:1;text-align:center;padding:.6rem;border:1px solid var(--border-on-paper);border-radius:var(--radius-sm);cursor:pointer;font-size:.85rem;color:var(--text-on-paper-dim)}
-.roleopt.active{background:var(--brass);border-color:var(--brass);color:#fff;font-weight:600}
-.primarybtn{width:100%;background:var(--brass);color:#fff;border:none;padding:.75rem;border-radius:var(--radius-sm);font-size:.92rem;font-weight:600;cursor:pointer;margin-top:.3rem}
-.primarybtn:hover{background:var(--brass-dark)}
-.inlinemsg{font-size:.82rem;margin-top:.8rem;padding:.6rem .8rem;border-radius:var(--radius-sm)}
-.inlinemsg.ok{background:var(--forest-bg);color:#bfe0c6;border:1px solid var(--forest)}
-.inlinemsg.bad{background:var(--brick-bg);color:#f0c2b8;border:1px solid var(--brick)}
-
-.dashhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem}
-.dashhead p{color:var(--text-on-ink-dim);font-size:.9rem;margin:.2rem 0 0}
-.leasegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.1rem}
-.leasecard{background:var(--paper);color:var(--text-on-paper);border-radius:var(--radius);padding:1.2rem;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.22);border-left:4px solid var(--forest)}
-.leasecard.ended{border-left-color:#998a6e;opacity:.8}
-.leasecard h3{font-size:1.05rem;margin-bottom:.5rem}
-.leasecard .meta{font-size:.8rem;color:var(--text-on-paper-dim);line-height:1.6}
-.badge{display:inline-block;font-size:.68rem;padding:.2rem .55rem;border-radius:99px;font-weight:600}
-.badge.active{background:var(--forest-bg);color:#9fcaa8}
-.badge.ended{background:#3a3326;color:#c7b894}
-.badge.pending{background:var(--awaiting-bg);color:#a9c2d4}
-
-.newleasecard{border:1.5px dashed var(--border-on-ink);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem;cursor:pointer;color:var(--text-on-ink-dim);min-height:120px;font-size:.88rem}
-.newleasecard:hover{border-color:var(--brass);color:var(--text-on-ink)}
-.newleasecard .plus{font-size:1.6rem;font-family:var(--serif);color:var(--brass)}
-
-.leaseformwrap{background:var(--paper);color:var(--text-on-paper);border-radius:var(--radius);padding:1.6rem;margin-bottom:1.5rem;box-shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.24)}
-.formrow{display:flex;gap:1rem;flex-wrap:wrap}
-.formrow .field{flex:1;min-width:180px}
-
-.backlink{display:inline-flex;align-items:center;gap:.4rem;color:var(--text-on-ink-dim);font-size:.85rem;cursor:pointer;margin-bottom:1.2rem}
-.backlink:hover{color:var(--brass)}
-
-.leasehead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.6rem;flex-wrap:wrap;gap:1rem}
-.leasehead h2{font-size:1.6rem;margin-bottom:.4rem}
-.leasehead .meta{color:var(--text-on-ink-dim);font-size:.88rem}
-.leasehead .meta b{color:var(--text-on-ink)}
-
-.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.9rem;margin-bottom:1.8rem}
-.stat{background:var(--ink-2);border:1px solid var(--border-on-ink);border-radius:var(--radius);padding:1rem 1.1rem}
-.stat .num{font-family:var(--serif);font-size:1.5rem;color:var(--brass)}
-.stat .lbl{font-size:.76rem;color:var(--text-on-ink-dim);margin-top:.2rem}
-
-.section{background:var(--ink-2);border:1px solid var(--border-on-ink);border-radius:var(--radius);padding:1.4rem;margin-bottom:1.3rem}
-.section h3{font-size:.95rem;color:var(--text-on-ink);margin-bottom:1rem;font-family:var(--sans);font-weight:600}
-.darkfield{margin-bottom:.9rem}
-.darkfield label{display:block;font-size:.78rem;color:var(--text-on-ink-dim);margin-bottom:.35rem}
-.darkfield input,.darkfield select{width:100%;padding:.6rem .7rem;border:1px solid var(--border-on-ink);border-radius:var(--radius-sm);background:var(--ink);color:var(--text-on-ink);font-size:.9rem;font-family:var(--sans)}
-.btn{background:var(--brass);color:#fff;border:none;padding:.6rem 1.1rem;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;cursor:pointer}
-.btn:hover{background:var(--brass-dark)}
-.btn.outline{background:none;border:1px solid var(--border-on-ink);color:var(--text-on-ink)}
-.btn.outline:hover{border-color:var(--brass);color:var(--brass)}
-.btn.danger{background:none;border:1px solid var(--brick);color:#e0988a}
-.btn.danger:hover{background:var(--brick-bg)}
-.btnrow{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.3rem}
-
-.evcard{background:var(--ink);border:1px solid var(--border-on-ink);border-radius:var(--radius-sm);padding:.9rem 1rem;margin-bottom:.7rem}
-.evcard .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
-.evtype{font-size:.72rem;text-transform:capitalize;color:var(--text-on-ink-dim)}
-.evdesc{font-size:.88rem;color:var(--text-on-ink)}
-.evwho{font-size:.76rem;color:var(--text-on-ink-dim);margin-top:.4rem}
-.evwho b{color:var(--text-on-ink)}
-#toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:#8a2c2c;color:#fff;padding:.7rem 1.2rem;border-radius:var(--radius-sm);font-size:.85rem;box-shadow:0 4px 14px rgba(0,0,0,.4);z-index:50;display:none;max-width:90vw}
-.pvres{margin-top:.4rem;font-size:.78rem;color:var(--text-on-ink-dim);word-break:break-all}
-.keybanner{background:#3b2a12;border:1px solid var(--brass);color:#f3dcb0;padding:.7rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;font-size:.85rem}
-.keybanner input{margin-left:.5rem}
-.fp{font-family:var(--mono);font-size:.7rem;color:var(--text-on-ink-dim);margin:0 .6rem}
-.verifychip{margin:.6rem 0 1rem;padding:.6rem .9rem;border-radius:var(--radius-sm);font-size:.85rem;border:1px solid var(--border-on-ink)}
-.verifychip.ok{color:#7fb069;border-color:#4f7a3d}
-.verifychip.bad{color:#f1b0b0;border-color:#8a2c2c;background:#2e1414}
-.sigs{font-size:.78rem;color:var(--text-on-ink-dim);margin:.3rem 0}
-.keyfps{font-family:var(--mono);font-size:.72rem;color:var(--text-on-ink-dim);margin-top:.35rem}
-.evphoto{display:block;max-width:100%;max-height:220px;border-radius:var(--radius-sm);margin:.5rem 0;border:1px solid var(--border-on-ink)}
-
-.block{background:var(--ink);border:1px solid var(--border-on-ink);border-radius:var(--radius-sm);padding:.9rem 1rem;margin-bottom:.6rem}
-.block .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem}
-.block .idx{font-family:var(--serif);color:var(--brass);font-size:.95rem}
-.block .desc{font-size:.85rem;color:var(--text-on-ink);margin-bottom:.4rem}
-.block .hash{font-family:var(--mono);font-size:.68rem;color:var(--text-on-ink-dim);word-break:break-all}
-
-.empty{color:var(--text-on-ink-dim);font-size:.85rem;padding:.5rem 0}
-.demotools{margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--border-on-ink)}
-.demotools summary{font-size:.78rem;color:var(--text-on-ink-dim);cursor:pointer}
-.demotools .btnrow{margin-top:.7rem}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
-<div class="topbar">
-  <div class="wordmark">Rental <em>Evidence Vault</em></div>
-  <div class="userchip hidden" id="userchip">
-    <span><b id="whoami"></b></span>
-    <span class="fp" id="myfp"></span>
-    <button class="ghostbtn" onclick="downloadKeyBackup()">Back up key</button>
-    <button class="ghostbtn" onclick="logout()">Log out</button>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" onclick="go('/', event)">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Rental Evidence Vault</span>
+    </a>
+    <nav class="header-nav" id="headerNav"></nav>
   </div>
-</div>
+</header>
 
 <main>
 
-  <div id="keyBanner" class="keybanner hidden">This device does not hold your signing key, so you can read but not sign. Import your key backup: <input type="file" accept="application/json" onchange="importKeyFile(this)"></div>
-
-  <div id="authView" class="authwrap">
-    <div class="authtabs">
-      <div class="authtab active" id="tabLogin" onclick="setAuthMode('login')">Log in</div>
-      <div class="authtab" id="tabRegister" onclick="setAuthMode('register')">Create account</div>
+<section id="landingView" class="hidden">
+  <div class="hero">
+    <div class="container hero-inner">
+      <p class="eyebrow">For tenants and landlords</p>
+      <h1>Rental records your landlord can't dispute — and neither can you.</h1>
+      <p class="lead">Every move-in photo, rent payment and repair is signed by both tenant and landlord, then locked. Nobody can quietly change it later, and either of you can check it at any time.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="/login?mode=register" onclick="go('/login?mode=register', event)">Get started</a>
+        <button class="btn btn-secondary btn-lg" onclick="openSamplePacket()">See a sample dispute packet</button>
+      </div>
     </div>
-    <div class="panel">
-      <h2 id="authTitle">Welcome back</h2>
-      <div class="field">
-        <label>Username</label>
-        <input id="authUsername" placeholder="priya_tenant">
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input id="authPassword" type="password" placeholder="••••••••">
-      </div>
-      <div class="field hidden" id="roleField">
-        <label>I am a</label>
-        <div class="roletoggle">
-          <div class="roleopt active" id="roleTenant" onclick="setRole('tenant')">Tenant</div>
-          <div class="roleopt" id="roleLandlord" onclick="setRole('landlord')">Landlord</div>
+  </div>
+
+  <section class="band" id="how">
+    <div class="container">
+      <h2 class="section-title">How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step-no">1</span>
+          <h3>Record</h3>
+          <p>Add photos and notes: the condition of each room at move-in, a rent payment, a repair request.</p>
+        </div>
+        <div class="step">
+          <span class="step-no">2</span>
+          <h3>Both confirm</h3>
+          <p>The other person looks at it and signs. Until both of you have signed, nothing is locked in.</p>
+        </div>
+        <div class="step">
+          <span class="step-no">3</span>
+          <h3>Locked and exportable</h3>
+          <p>Verify the record whenever you like, and export a dispute packet if you ever need one.</p>
         </div>
       </div>
-      <button class="primarybtn" id="authSubmitBtn" onclick="submitAuth()">Log in</button>
+    </div>
+  </section>
+
+  <section class="band band-alt">
+    <div class="container">
+      <h2 class="section-title">Who it's for</h2>
+      <div class="audience">
+        <div class="audience-item">
+          <h3>Tenants</h3>
+          <p>Protect your deposit. Show exactly how the flat looked the day you moved in and the day you left.</p>
+        </div>
+        <div class="audience-item">
+          <h3>Landlords</h3>
+          <p>Prove the condition of the property and that rent was paid, without chasing screenshots.</p>
+        </div>
+        <div class="audience-item">
+          <h3>Mediators and courts</h3>
+          <p>Check the record yourself from the exported packet. You don't have to trust this app to do it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="security">
+    <div class="container">
+      <h2 class="section-title">Security, in plain language</h2>
+      <div class="security-list">
+        <div class="security-item">
+          <span class="security-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+          <div>
+            <h3>Your key stays on your device</h3>
+            <p>When you sign up, your browser creates a private key and keeps it. We only receive the matching public key, which can check a signature but can't make one.</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <div>
+            <h3>The server can't forge your signature</h3>
+            <p>Without your private key, nobody, including whoever runs this site, can sign for you or add an entry that looks like you agreed to it.</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <div>
+            <h3>Anyone can verify the ledger</h3>
+            <p>Your browser re-checks every signature and photo on its own. The exported packet explains how to do the same check outside the app.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-alt" id="faq">
+    <div class="container container-narrow">
+      <h2 class="section-title">Questions</h2>
+      <details class="faq">
+        <summary>Is this legally valid?</summary>
+        <p>We can't promise how a court or rent authority will treat it, and this project makes no legal claim. What it does give you is a record that both of you signed and that anyone can check for changes. How much weight that carries is for the court to decide.</p>
+      </details>
+      <details class="faq">
+        <summary>What if my landlord won't confirm?</summary>
+        <p>Nothing is locked until both of you sign. An event that hasn't been confirmed stays visible to you as waiting, and it is not part of the signed record.</p>
+      </details>
+      <details class="faq">
+        <summary>What if I lose my device?</summary>
+        <p>Use "Back up key" in your account menu and keep the file somewhere safe. On a new device, restore that file to keep signing. Without a backup you can still read and verify the record, but you can't sign new entries with that account.</p>
+      </details>
+      <details class="faq">
+        <summary>Can events be edited?</summary>
+        <p>No. After both of you sign, an event can't be changed; any edit breaks the record and shows up when it is verified. To correct something, add a new event.</p>
+      </details>
+    </div>
+  </section>
+</section>
+
+<section id="loginView" class="hidden">
+  <div class="container auth-wrap">
+    <div class="card auth-card">
+      <div class="segmented" role="tablist" aria-label="Log in or create an account">
+        <button class="seg active" id="tabLogin" role="tab" aria-selected="true" onclick="setAuthMode('login')">Log in</button>
+        <button class="seg" id="tabRegister" role="tab" aria-selected="false" onclick="setAuthMode('register')">Create account</button>
+      </div>
+      <h1 class="auth-title" id="authTitle">Welcome back</h1>
+      <form onsubmit="submitAuth(); return false;" novalidate>
+        <div class="field">
+          <label for="authUsername">Username</label>
+          <input id="authUsername" autocomplete="username" placeholder="priya_tenant">
+        </div>
+        <div class="field">
+          <label for="authPassword">Password</label>
+          <input id="authPassword" type="password" autocomplete="current-password">
+        </div>
+        <div class="field hidden" id="roleField">
+          <label>I am a</label>
+          <div class="segmented" id="roleSeg">
+            <button type="button" class="seg active" id="roleTenant" onclick="setRole('tenant')">Tenant</button>
+            <button type="button" class="seg" id="roleLandlord" onclick="setRole('landlord')">Landlord</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="authSubmitBtn">Log in</button>
+      </form>
       <div id="authMsg"></div>
+      <p class="auth-note">Rental Evidence Vault keeps a record of your tenancy that both you and your landlord sign. <a href="/" onclick="go('/', event)">Learn how it works</a></p>
     </div>
   </div>
+</section>
 
-  <div id="dashView" class="hidden">
-    <div class="dashhead">
-      <div>
-        <h2>Your leases</h2>
-        <p>Every lease keeps its own tamper-evident record.</p>
+<section id="appView" class="hidden">
+  <div class="container">
+
+    <div id="keyPrompt" class="banner banner-warn hidden" role="alert">
+      <div class="banner-body">
+        <strong>To sign on this device, restore your key backup.</strong>
+        <span>This browser doesn't hold your device key yet. You can read the record, but you can't sign until you restore it.</span>
       </div>
+      <button class="btn btn-secondary" onclick="document.getElementById('restoreInput').click()">Restore key</button>
+      <input id="restoreInput" type="file" accept="application/json" hidden onchange="importKeyFile(this)">
     </div>
 
-    <div class="leaseformwrap hidden" id="leaseFormWrap">
-      <div class="formrow">
-        <div class="field"><label>Property address</label><input id="leaseAddress" placeholder="221B, Sector 14"></div>
-        <div class="field"><label>Tenant username</label><input id="leaseTenant" placeholder="priya_tenant"></div>
-      </div>
-      <div class="formrow">
-        <div class="field"><label>Monthly rent (optional)</label><input id="leaseRent" type="number" placeholder="18000"></div>
-        <div class="field"><label>Start date (optional)</label><input id="leaseStartDate" type="date"></div>
-      </div>
-      <div class="field"><label><input id="leaseDemo" type="checkbox" style="width:auto"> Demo lease (turns on the tamper simulator)</label></div>
-      <div class="btnrow">
-        <button class="primarybtn" style="width:auto" onclick="createLease()">Save lease</button>
-        <button class="ghostbtn" onclick="toggleLeaseForm(false)">Cancel</button>
-      </div>
-      <div id="leaseMsg"></div>
-    </div>
-
-    <div class="leasegrid" id="leaseGrid">
-      <div class="newleasecard" onclick="toggleLeaseForm(true)">
-        <div class="plus">+</div>
-        <div>Add a lease</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="leaseView" class="hidden">
-    <div class="backlink" onclick="showDashboard()">&larr; Your leases</div>
-
-    <div class="leasehead">
-      <div>
-        <h2 id="lv_address"></h2>
-        <div class="meta" id="lv_meta"></div>
-      </div>
-      <div class="btnrow" id="lv_endwrap"></div>
-    </div>
-
-    <div class="statrow" id="lv_stats"></div>
-    <div id="lv_verify" class="verifychip"></div>
-
-    <div class="section" id="lv_logsection">
-      <h3>Log a new event</h3>
-      <div class="formrow">
-        <div class="darkfield" style="flex:1;min-width:160px">
-          <label>Type</label>
-          <select id="eventType" onchange="onEventTypeChange()">
-            <option value="MOVE_IN">Move-in condition</option>
-            <option value="MOVE_OUT">Move-out condition</option>
-            <option value="PAYMENT">Payment</option>
-            <option value="MAINTENANCE">Maintenance complaint</option>
-            <option value="MAINTENANCE_UPDATE">Maintenance update</option>
-          </select>
+    <div id="dashView" class="hidden">
+      <div class="page-head">
+        <div>
+          <h1>Your leases</h1>
+          <p class="muted">Each lease has its own signed record.</p>
         </div>
-        <div class="darkfield hidden" id="amountWrap" style="flex:1;min-width:140px">
-          <label>Amount (₹)</label>
-          <input id="eventAmount" type="number" placeholder="18000">
+        <button class="btn btn-primary hidden" id="addLeaseBtn" onclick="toggleLeaseForm(true)">Add a lease</button>
+      </div>
+
+      <div class="card form-card hidden" id="leaseFormWrap">
+        <h2>New lease</h2>
+        <div class="form-grid">
+          <div class="field"><label for="leaseAddress">Property address</label><input id="leaseAddress" placeholder="221B, Sector 14, Jaipur"></div>
+          <div class="field"><label for="leaseTenant">Tenant's username</label><input id="leaseTenant" placeholder="priya_tenant"></div>
+          <div class="field"><label for="leaseRent">Monthly rent (₹, optional)</label><input id="leaseRent" type="number" placeholder="18000"></div>
+          <div class="field"><label for="leaseStartDate">Start date (optional)</label><input id="leaseStartDate" type="date"></div>
+        </div>
+        <label class="check"><input id="leaseDemo" type="checkbox"> Demo lease (turns on the tamper simulator)</label>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="createLease()">Save lease</button>
+          <button class="btn btn-ghost" onclick="toggleLeaseForm(false)">Cancel</button>
+        </div>
+        <div id="leaseMsg"></div>
+      </div>
+
+      <div id="leaseGrid" class="lease-list"></div>
+    </div>
+
+    <div id="leaseView" class="hidden">
+      <a class="back" href="/app" onclick="go('/app', event)">&larr; Your leases</a>
+
+      <div class="lease-head">
+        <div class="lease-title">
+          <h1 id="lv_address"></h1>
+          <p class="muted" id="lv_meta"></p>
+          <button class="conn-badge" id="lv_conn" onclick="openConnectionModal()"></button>
+        </div>
+        <div class="menu-wrap hidden" id="lv_menuwrap">
+          <button class="icon-btn" aria-label="Lease options" aria-haspopup="true" onclick="toggleMenu('leaseMenu', event)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+          </button>
+          <div class="menu hidden" id="leaseMenu">
+            <button class="menu-item danger-text" onclick="confirmEndLease()">End lease</button>
+          </div>
         </div>
       </div>
-      <div class="darkfield">
-        <label>Details</label>
-        <input id="eventDesc" placeholder="e.g. small crack near window, otherwise clean">
-      </div>
-      <div class="darkfield">
-        <label>Photo (optional, max 5MB)</label>
-        <input id="eventPhoto" type="file" accept="image/*">
-      </div>
-      <button class="btn" onclick="proposeEvent()">Propose event</button>
-      <div id="eventMsg"></div>
-    </div>
 
-    <div class="section">
-      <h3>Awaiting confirmation</h3>
-      <div id="pendingList"></div>
-    </div>
+      <div class="status-bar" id="lv_stats"></div>
+      <div id="lv_verify" class="verify-line"></div>
 
-    <div class="section">
-      <h3>Evidence ledger</h3>
-      <div id="blockList"></div>
-      <div class="btnrow">
-        <button class="btn outline" onclick="verifyInBrowser()">Verify in my browser</button>
-        <button class="btn outline" onclick="verifyChain()">Ask the server to verify</button>
-        <button class="btn outline" onclick="downloadReceipt()">Download signed receipt</button>
-        <label class="btn outline">Check a receipt<input type="file" accept="application/json" onchange="checkReceipt(this)" hidden></label>
-        <button class="btn outline" onclick="exportPacket()">Export dispute packet</button>
+      <div class="card onboard hidden" id="lv_onboard">
+        <h2>Start your evidence record</h2>
+        <p>Most deposit disputes are about move-in condition. Add photos of each room now — once your landlord confirms, both signatures lock them in.</p>
+        <button class="btn btn-primary" onclick="startMoveIn()">Add move-in photos</button>
       </div>
-      <div id="chainMsg"></div>
-      <details class="demotools hidden" id="demoTools">
+
+      <div class="card form-card compose" id="lv_logsection">
+        <h2>Log a new event</h2>
+        <div class="field">
+          <label id="chipLabel">What happened?</label>
+          <div class="chips" id="chipRow" role="radiogroup" aria-labelledby="chipLabel"></div>
+        </div>
+        <div class="form-grid hidden" id="rentFields">
+          <div class="field"><label for="eventAmount">Amount paid (₹)</label><input id="eventAmount" type="number" inputmode="numeric" placeholder="18000"></div>
+          <div class="field"><label for="eventDate">Paid on</label><input id="eventDate" type="date"></div>
+        </div>
+        <div class="field">
+          <label for="eventDesc">Details</label>
+          <textarea id="eventDesc" rows="3" placeholder="e.g. Hairline crack on the bedroom window, walls freshly painted, geyser works"></textarea>
+        </div>
+        <div class="field">
+          <label>Photos</label>
+          <div class="dropzone" id="photoDrop" tabindex="0" role="button" aria-label="Add photos">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+            <span>Drop files here or <u>browse</u></span>
+            <small id="photoHint">Up to 6 photos, 5 MB each</small>
+            <input id="eventPhoto" type="file" accept="image/*" multiple hidden>
+          </div>
+          <div class="thumbs" id="photoThumbs"></div>
+        </div>
+        <button class="btn btn-primary" id="sendBtn" onclick="proposeEvent()">Send to confirm</button>
+        <p class="helper">Once both of you sign, this can't be edited.</p>
+        <div id="eventMsg"></div>
+      </div>
+
+      <div id="waitYou" class="hidden">
+        <h2 class="block-title">Waiting on you</h2>
+        <div id="pendingYou"></div>
+      </div>
+      <div id="waitThem" class="hidden">
+        <h2 class="block-title">Waiting on <span id="waitThemName">them</span></h2>
+        <div id="pendingThem"></div>
+      </div>
+
+      <div id="ledgerWrap" class="hidden">
+        <div class="ledger-head">
+          <h2 class="block-title">Evidence ledger</h2>
+          <div class="btn-row tight">
+            <div class="menu-wrap">
+              <button class="btn btn-secondary" aria-haspopup="true" onclick="toggleMenu('verifyMenu', event)">Verify
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <div class="menu menu-right hidden" id="verifyMenu">
+                <button class="menu-item" onclick="closeMenus(); verifyInBrowser()">Verify in my browser</button>
+                <button class="menu-item" onclick="closeMenus(); verifyChain()">Ask the server to verify</button>
+                <button class="menu-item" onclick="closeMenus(); downloadReceipt()">Download signed receipt</button>
+                <button class="menu-item" onclick="closeMenus(); openReceiptModal()">Check a receipt</button>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="exportPacket()">Export dispute packet</button>
+          </div>
+        </div>
+        <div id="chainMsg"></div>
+        <div class="timeline" id="blockList"></div>
+      </div>
+
+      <details class="card demotools hidden" id="demoTools">
         <summary>Demo tools: simulate an attack (demo leases only)</summary>
-        <div class="btnrow">
-          <button class="btn danger" onclick="tamperDemo(false)">Edit block 0</button>
-          <button class="btn danger" onclick="tamperDemo(true)">Edit block 0 and recompute every hash</button>
+        <p class="muted">These change the stored record on purpose, so you can watch the checks catch it.</p>
+        <div class="btn-row">
+          <button class="btn btn-danger" onclick="tamperDemo(false)">Edit block 0</button>
+          <button class="btn btn-danger" onclick="tamperDemo(true)">Edit block 0 and recompute every hash</button>
         </div>
+        <div id="demoMsg"></div>
       </details>
     </div>
   </div>
+</section>
 
 </main>
 
-<div id="toast"></div>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>Rental Evidence Vault · PBL-III project, Manipal University Jaipur</span>
+    <span class="footer-links">
+      <a href="#" onclick="openInfo('privacy'); return false;">Privacy</a>
+      <a href="#" onclick="openInfo('terms'); return false;">Terms</a>
+      <a href="#" onclick="openInfo('contact'); return false;">Contact</a>
+    </span>
+  </div>
+</footer>
+
+<div class="modal-backdrop hidden" id="modalBackdrop" onclick="if(event.target===this) closeModal()">
+  <div class="modal" id="modalBox" role="dialog" aria-modal="true"></div>
+</div>
+
+<div id="toast" role="status"></div>
 
 <script>
 let token = localStorage.getItem("rev_token");
@@ -367,7 +408,7 @@ function downloadJson(name, obj) {
 
 function downloadKeyBackup() {
   const k = storedKey();
-  if (!k || k.publicKey !== myPublicKey) { showToast("This device has no signing key to back up."); return; }
+  if (!k || k.publicKey !== myPublicKey) { showToast("This device has no key to back up."); return; }
   downloadJson(`rev-key-${username}.json`, { app: "rental-evidence-vault", username, publicKey: k.publicKey, jwk: k.jwk });
 }
 
@@ -381,17 +422,20 @@ async function importKeyFile(input) {
     const sig = bytesToHex(await crypto.subtle.sign({ name: "Ed25519" }, key, enc.encode("check")));
     if (!(await verifyWith(myPublicKey, "check", sig))) throw new Error("This key does not match your registered key.");
     storeKey(username, { publicKey: parsed.publicKey, jwk: parsed.jwk });
-    renderKeyState();
-    showToast("Signing key imported.");
+    document.getElementById("keyPrompt").classList.add("hidden");
+    showToast("Key restored. You can sign on this device now.", true);
   } catch (e) {
     showToast(e.message || "Could not read that key file.");
   }
   input.value = "";
 }
 
-async function renderKeyState() {
-  document.getElementById("keyBanner").classList.toggle("hidden", hasSigningKey());
-  document.getElementById("myfp").textContent = myPublicKey ? "key " + (await fingerprintOf(myPublicKey)) : "";
+function ensureKey() {
+  if (hasSigningKey()) { document.getElementById("keyPrompt").classList.add("hidden"); return true; }
+  const el = document.getElementById("keyPrompt");
+  el.classList.remove("hidden");
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  return false;
 }
 
 function api(path, opts = {}) {
@@ -411,9 +455,10 @@ function api(path, opts = {}) {
 }
 
 let toastTimer = null;
-function showToast(text) {
+function showToast(text, good) {
   const el = document.getElementById("toast");
   el.textContent = text;
+  el.className = good ? "good" : "";
   el.style.display = "block";
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.style.display = "none"; }, 4000);
@@ -460,27 +505,230 @@ async function verifyPhoto(photoId, resultId) {
   try {
     const res = await api(`/api/leases/${currentLeaseId}/photos/${photoId}/verify`);
     const ok = res.matchesStoredHash && res.inChain && res.matchesChainHash;
+    el.className = "pvres " + (ok ? "ok" : "bad");
     el.textContent = (ok ? "Verified: the stored image matches the hash sealed in block #" + res.blockIndex + "." : "Mismatch: this image no longer matches its recorded hash.") + " Recomputed " + res.recomputedHash.slice(0, 24) + "...";
-    el.style.color = ok ? "#7fb069" : "#e07a7a";
   } catch (e) {
+    el.className = "pvres bad";
     el.textContent = e.message;
   }
 }
 
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
 function showMsg(elId, text, ok) {
   const el = document.getElementById(elId);
-  el.className = "inlinemsg " + (ok ? "ok" : "bad");
-  el.textContent = text;
+  if (!el) return;
+  el.innerHTML = `<div class="banner ${ok ? "banner-ok" : "banner-bad"}" role="${ok ? "status" : "alert"}"><div class="banner-body">${escapeHtml(text)}</div><button class="banner-x" aria-label="Dismiss" onclick="this.parentElement.remove()">&times;</button></div>`;
+}
+
+const ICONS = {
+  home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  rupee: '<path d="M7 5h10M7 9h10M7 5c5 0 7 2 7 4s-2 4-7 4l7 7"/>',
+  tool: '<path d="M14.7 6.3a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.7-7.7"/><path d="M4 20l3-3"/>',
+  alert: '<path d="M12 3l10 18H2L12 3z"/><path d="M12 10v5M12 18h.01"/>',
+  exit: '<path d="M9 21H5V3h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+  file: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
+  checks: '<path d="M2 12l5 5 9-10"/><path d="M12 16l2 1 8-10"/>',
+  check: '<path d="M5 12l5 5 9-10"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+function icon(name, size) {
+  const s = size || 18;
+  return `<svg class="ic" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+}
+
+const CHIPS = [
+  { id: "MOVE_IN", type: "MOVE_IN", label: "Move-in", icon: "home", prefix: "" },
+  { id: "RENT", type: "PAYMENT", label: "Rent paid", icon: "rupee", prefix: "" },
+  { id: "REPAIR", type: "MAINTENANCE", label: "Repair", icon: "tool", prefix: "" },
+  { id: "DAMAGE", type: "MAINTENANCE", label: "Damage", icon: "alert", prefix: "Damage: " },
+  { id: "MOVE_OUT", type: "MOVE_OUT", label: "Move-out", icon: "exit", prefix: "" },
+  { id: "OTHER", type: "MAINTENANCE_UPDATE", label: "Other", icon: "file", prefix: "" }
+];
+let selectedChip = "MOVE_IN";
+let pendingPhotos = [];
+const MAX_PHOTOS = 6;
+
+function eventKind(type, description) {
+  const d = description || "";
+  if (type === "MAINTENANCE" && d.startsWith("Damage: ")) return { label: "Damage", icon: "alert", text: d.slice(8) };
+  const map = { MOVE_IN: ["Move-in", "home"], MOVE_OUT: ["Move-out", "exit"], PAYMENT: ["Rent paid", "rupee"], MAINTENANCE: ["Repair", "tool"], MAINTENANCE_UPDATE: ["Other", "file"] };
+  const m = map[type] || [type, "file"];
+  return { label: m[0], icon: m[1], text: d };
+}
+
+function fmtDate(value) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: String(value).length === 10 ? "UTC" : undefined });
+}
+
+function fmtDateTime(value) {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function fmtMoney(n) {
+  return "₹" + Number(n).toLocaleString("en-IN");
+}
+
+function displayName(u) {
+  return String(u || "").split(/[_\-.\s]+/).filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") || String(u || "");
+}
+
+function initials(u) {
+  const parts = displayName(u).split(" ").filter(Boolean);
+  return ((parts[0] || "?").charAt(0) + (parts.length > 1 ? parts[parts.length - 1].charAt(0) : "")).toUpperCase();
+}
+
+function go(path, ev) {
+  if (ev) ev.preventDefault();
+  history.pushState({}, "", path);
+  render();
+}
+
+function render() {
+  closeMenus();
+  const url = new URL(location.href);
+  let path = url.pathname.replace(/\/+$/, "") || "/";
+  if (path === "/login" && token) { history.replaceState({}, "", "/app"); path = "/app"; }
+  if (path === "/app" && !token) { history.replaceState({}, "", "/login"); path = "/login"; }
+  if (path !== "/" && path !== "/login" && path !== "/app") { history.replaceState({}, "", "/"); path = "/"; }
+
+  document.getElementById("landingView").classList.toggle("hidden", path !== "/");
+  document.getElementById("loginView").classList.toggle("hidden", path !== "/login");
+  document.getElementById("appView").classList.toggle("hidden", path !== "/app");
+  renderHeader();
+  window.scrollTo(0, 0);
+
+  if (path === "/login") {
+    setAuthMode(url.searchParams.get("mode") === "register" ? "register" : "login");
+  } else if (path === "/app") {
+    renderKeyState();
+    const leaseId = url.searchParams.get("lease");
+    if (leaseId) openLease(leaseId).catch(() => showDashboard().catch(() => {}));
+    else showDashboard().catch(() => {});
+  }
+}
+
+window.addEventListener("popstate", render);
+
+function renderHeader() {
+  const nav = document.getElementById("headerNav");
+  if (!token) {
+    nav.innerHTML = `<a class="nav-link hide-sm" href="/#how" onclick="goSection('how', event)">How it works</a>
+      <a class="nav-link" href="/login" onclick="go('/login', event)">Log in</a>
+      <a class="btn btn-primary btn-sm" href="/login?mode=register" onclick="go('/login?mode=register', event)">Get started</a>`;
+    return;
+  }
+  const name = displayName(username);
+  nav.innerHTML = `<a class="nav-link hide-sm" href="/app" onclick="go('/app', event)">Your leases</a>
+    <div class="menu-wrap">
+      <button class="account-btn" id="accountBtn" aria-haspopup="true" onclick="toggleMenu('accountMenu', event)">
+        <span class="avatar">${escapeHtml(initials(username))}</span>
+        <span class="account-name hide-sm">${escapeHtml(name)}</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="menu menu-right hidden" id="accountMenu">
+        <div class="menu-head"><strong>${escapeHtml(name)}</strong><span class="muted">${escapeHtml(role || "")} · @${escapeHtml(username)}</span></div>
+        <button class="menu-item" onclick="closeMenus(); downloadKeyBackup()">Back up key</button>
+        <button class="menu-item" onclick="closeMenus(); openMyFingerprint()">Your key fingerprint</button>
+        <button class="menu-item" onclick="closeMenus(); logout()">Log out</button>
+      </div>
+    </div>`;
+}
+
+function goSection(id, ev) {
+  if (ev) ev.preventDefault();
+  if (location.pathname !== "/") { history.pushState({}, "", "/"); render(); }
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
+function toggleMenu(id, ev) {
+  if (ev) ev.stopPropagation();
+  const el = document.getElementById(id);
+  const open = el.classList.contains("hidden");
+  closeMenus();
+  if (open) el.classList.remove("hidden");
+}
+
+function closeMenus() {
+  document.querySelectorAll(".menu").forEach((m) => m.classList.add("hidden"));
+}
+
+document.addEventListener("click", closeMenus);
+
+function openModal(html, wide) {
+  const box = document.getElementById("modalBox");
+  box.className = "modal" + (wide ? " modal-wide" : "");
+  box.innerHTML = html;
+  document.getElementById("modalBackdrop").classList.remove("hidden");
+  const focus = box.querySelector("[data-autofocus]") || box.querySelector("button, a, input");
+  if (focus) focus.focus();
+}
+
+function closeModal() {
+  document.getElementById("modalBackdrop").classList.add("hidden");
+  document.getElementById("modalBox").innerHTML = "";
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeModal(); closeMenus(); }
+});
+
+function modalHead(title) {
+  return `<div class="modal-head"><h2>${title}</h2><button class="icon-btn" aria-label="Close" onclick="closeModal()">&times;</button></div>`;
+}
+
+function openInfo(kind) {
+  const pages = {
+    privacy: ["Privacy", "<p>We keep your username, a hashed password, your public key, the events you and the other person sign, and any photos you attach. Photos and events are visible only to the two people on the lease.</p><p>Your private key is created in your browser and stays there. We never receive it.</p>"],
+    terms: ["Terms", "<p>This is a student project built for a university course. It is provided as it is, without any promise that it will stay available or that a court will accept the records. It is not legal advice.</p><p>Keep your own copies of anything important, including your key backup and any receipts you download.</p>"],
+    contact: ["Contact", "<p>Built by Raj Shukla for PBL-III at Manipal University Jaipur, Department of Computer Science and Engineering.</p><p>For questions about the project, please reach out through your course supervisor.</p>"]
+  };
+  const [title, body] = pages[kind];
+  openModal(modalHead(title) + `<div class="modal-body">${body}</div>`);
+}
+
+function openSamplePacket() {
+  const sample = {
+    generatedAt: "2026-10-10T09:30:00.000Z",
+    lease: { id: "lease-1a2b3c4d", address: "221B, Sector 14, Jaipur", tenant: "priya_tenant", landlord: "arjun_landlord" },
+    fingerprints: { priya_tenant: "9F3A-07C1-52DE-B8A4", arjun_landlord: "41C7-D2E9-0B6F-83AA" },
+    integrityCheck: { valid: true },
+    blocks: [{
+      index: 0, type: "MOVE_IN", data: { description: "Hairline crack on bedroom window", photoHash: "e3b0c442…" },
+      proposedBy: "priya_tenant", confirmedBy: "arjun_landlord",
+      proposerSignature: "7c41…", confirmerSignature: "a9d2…",
+      prevHash: "0000…0000", blockHash: "5d2b…"
+    }],
+    howToVerify: "Rebuild each block's payload, check its SHA-256 and both signatures against the listed public keys, then check the hash links."
+  };
+  openModal(modalHead("Sample dispute packet") + `<div class="modal-body"><p class="muted">An example of the file you can export from a lease. The values here are shortened and made up.</p><pre class="code">${escapeHtml(JSON.stringify(sample, null, 2))}</pre><p>Anyone with this file can follow the "howToVerify" steps and check every signature on their own computer.</p></div>`, true);
+}
+
+async function openMyFingerprint() {
+  const fp = myPublicKey ? await fingerprintOf(myPublicKey) : "not available";
+  openModal(modalHead("Your key fingerprint") + `<div class="modal-body"><p>This short code identifies the key on your device. The person you share a lease with can compare it with what they see for you.</p><div class="fp-box mono">${escapeHtml(fp)}</div><div class="btn-row"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div></div>`);
 }
 
 function setAuthMode(mode) {
   authMode = mode;
   document.getElementById("tabLogin").classList.toggle("active", mode === "login");
   document.getElementById("tabRegister").classList.toggle("active", mode === "register");
+  document.getElementById("tabLogin").setAttribute("aria-selected", mode === "login");
+  document.getElementById("tabRegister").setAttribute("aria-selected", mode === "register");
   document.getElementById("roleField").classList.toggle("hidden", mode !== "register");
   document.getElementById("authTitle").textContent = mode === "login" ? "Welcome back" : "Create your account";
   document.getElementById("authSubmitBtn").textContent = mode === "login" ? "Log in" : "Create account";
-  document.getElementById("authMsg").textContent = "";
+  document.getElementById("authPassword").setAttribute("autocomplete", mode === "login" ? "current-password" : "new-password");
+  document.getElementById("authMsg").innerHTML = "";
 }
 
 let selectedRole = "tenant";
@@ -499,7 +747,7 @@ async function submitAuth() {
       const pair = await generateKeyPair();
       await api("/api/auth/register", { method: "POST", body: JSON.stringify({ username: u, password: p, role: selectedRole, publicKey: pair.publicKey }) });
       storeKey(u, pair);
-      showMsg("authMsg", "Account created. Your signing key was made in this browser. Logging you in...", true);
+      showMsg("authMsg", "Account created. Your device key was made in this browser. Logging you in...", true);
     }
     const res = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ username: u, password: p }) });
     token = res.token; username = res.username; role = res.role; myPublicKey = res.publicKey;
@@ -520,18 +768,18 @@ function logout() {
   localStorage.removeItem("rev_pub");
   lastDetail = null;
   token = null; username = null; role = null; currentLeaseId = null;
-  document.getElementById("authView").classList.remove("hidden");
-  document.getElementById("dashView").classList.add("hidden");
-  document.getElementById("leaseView").classList.add("hidden");
-  document.getElementById("userchip").classList.add("hidden");
+  document.getElementById("keyPrompt").classList.add("hidden");
+  history.pushState({}, "", "/");
+  render();
 }
 
 function enterApp() {
-  document.getElementById("authView").classList.add("hidden");
-  document.getElementById("userchip").classList.remove("hidden");
-  document.getElementById("whoami").textContent = username + " · " + role;
-  renderKeyState();
-  showDashboard().catch(() => {});
+  history.pushState({}, "", "/app");
+  render();
+}
+
+function renderKeyState() {
+  if (hasSigningKey()) document.getElementById("keyPrompt").classList.add("hidden");
 }
 
 async function showDashboard() {
@@ -539,25 +787,40 @@ async function showDashboard() {
   document.getElementById("dashView").classList.remove("hidden");
   toggleLeaseForm(false);
   currentLeaseId = null;
+  document.getElementById("addLeaseBtn").classList.toggle("hidden", role !== "landlord");
   const leases = await api("/api/leases");
   const grid = document.getElementById("leaseGrid");
-  const cards = leases.map((l) => {
+  if (leases.length === 0) {
+    grid.innerHTML = role === "landlord"
+      ? `<div class="card empty-card"><h2>No leases yet</h2><p>Add a lease for a tenant who already has an account. Ask them for their username.</p><button class="btn btn-primary" onclick="toggleLeaseForm(true)">Add a lease</button></div>`
+      : `<div class="card empty-card"><h2>No leases yet</h2><p>Your landlord adds the lease using your username. Share it with them:</p><div class="fp-box mono">${escapeHtml(username)}</div></div>`;
+    return;
+  }
+  grid.innerHTML = leases.map((l) => {
     const other = l.tenantUsername === username ? l.landlordUsername : l.tenantUsername;
-    const rent = l.rentAmount ? "₹" + l.rentAmount + "/mo · " + l.rent.status : "rent not set";
-    return `<div class="leasecard ${l.status === "ended" ? "ended" : ""}" onclick="openLease('${l.id}')">
-      <span class="badge ${l.status}">${l.status}</span>
-      <h3>${escapeHtml(l.address)}</h3>
-      <div class="meta">With ${escapeHtml(other)}<br>${rent}</div>
-    </div>`;
+    const otherRole = l.tenantUsername === username ? "Landlord" : "Tenant";
+    const rent = l.rentAmount ? fmtMoney(l.rentAmount) + "/month" : "Rent not set";
+    const pills = [];
+    if (l.status === "ended") pills.push(`<span class="pill pill-neutral">Ended</span>`);
+    else if (l.rent && l.rent.status !== "Not tracked") pills.push(`<span class="pill ${rentPillClass(l.rent.status)}">${escapeHtml(l.rent.status)}</span>`);
+    else pills.push(`<span class="pill pill-neutral">Active</span>`);
+    return `<a class="card lease-row ${l.status === "ended" ? "is-ended" : ""}" href="/app?lease=${l.id}" onclick="go('/app?lease=${l.id}', event)">
+      <div class="lease-row-main">
+        <h2>${escapeHtml(l.address)}</h2>
+        <p class="muted">${otherRole}: ${escapeHtml(displayName(other))} · ${rent}${l.startDate ? " · since " + fmtDate(l.startDate) : ""}</p>
+      </div>
+      <div class="lease-row-side">${pills.join("")}<span class="chev" aria-hidden="true">&rsaquo;</span></div>
+    </a>`;
   }).join("");
-  const addCard = role === "landlord"
-    ? `<div class="newleasecard" onclick="toggleLeaseForm(true)"><div class="plus">+</div><div>Add a lease</div></div>`
-    : (leases.length === 0 ? `<div class="empty">No leases yet. Your landlord will add one for you.</div>` : "");
-  grid.innerHTML = cards + addCard;
+}
+
+function rentPillClass(status) {
+  return { Paid: "pill-good", Due: "pill-amber", Overdue: "pill-orange" }[status] || "pill-neutral";
 }
 
 function toggleLeaseForm(show) {
   document.getElementById("leaseFormWrap").classList.toggle("hidden", !show);
+  if (show) document.getElementById("leaseAddress").focus();
 }
 
 async function createLease() {
@@ -571,7 +834,9 @@ async function createLease() {
       method: "POST",
       body: JSON.stringify({ address, tenantUsername, rentAmount, startDate, demo }),
     });
-    showMsg("leaseMsg", "Lease saved.", true);
+    ["leaseAddress", "leaseTenant", "leaseRent", "leaseStartDate"].forEach((id) => { document.getElementById(id).value = ""; });
+    document.getElementById("leaseDemo").checked = false;
+    document.getElementById("leaseMsg").innerHTML = "";
     showDashboard();
   } catch (e) {
     showMsg("leaseMsg", e.message, false);
@@ -582,6 +847,9 @@ async function openLease(id) {
   currentLeaseId = id;
   document.getElementById("dashView").classList.add("hidden");
   document.getElementById("leaseView").classList.remove("hidden");
+  document.getElementById("eventMsg").innerHTML = "";
+  document.getElementById("chainMsg").innerHTML = "";
+  resetComposer();
   await refreshLeaseView();
 }
 
@@ -592,172 +860,334 @@ async function refreshLeaseView() {
   renderStats(detail.lease, detail.chain.blocks, detail.pendingEvents, detail.rent);
   renderPending(detail.pendingEvents, detail.lease);
   renderBlocks(detail.chain.blocks);
+  const empty = detail.chain.blocks.length === 0 && detail.pendingEvents.length === 0;
+  document.getElementById("lv_onboard").classList.toggle("hidden", !(empty && detail.lease.status === "active"));
   hydratePhotos();
   runSilentVerify(detail);
 }
 
+function otherParty(lease) {
+  return lease.tenantUsername === username ? lease.landlordUsername : lease.tenantUsername;
+}
+
+function fpConfirmKey(lease) {
+  return "rev_fpok_" + username + "_" + lease.id;
+}
+
+function connectionConfirmed(lease, fingerprints) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(fpConfirmKey(lease)));
+    return Boolean(saved) && saved.a === fingerprints[lease.tenantUsername] && saved.b === fingerprints[lease.landlordUsername];
+  } catch (e) { return false; }
+}
+
 function renderLeaseHead(lease, fingerprints) {
   document.getElementById("lv_address").textContent = lease.address;
-  const rent = lease.rentAmount ? "₹" + lease.rentAmount + "/month" : "rent not set";
-  const start = lease.startDate || "start date not set";
-  document.getElementById("lv_meta").innerHTML =
-    `<b>${escapeHtml(lease.tenantUsername)}</b> (tenant) &nbsp;&middot;&nbsp; <b>${escapeHtml(lease.landlordUsername)}</b> (landlord) &nbsp;&middot;&nbsp; ${rent} &nbsp;&middot;&nbsp; ${start}` +
-    `<div class="keyfps">key ${escapeHtml(fingerprints[lease.tenantUsername])} (${escapeHtml(lease.tenantUsername)}) &middot; key ${escapeHtml(fingerprints[lease.landlordUsername])} (${escapeHtml(lease.landlordUsername)}) &middot; each of you should see the other's key fingerprint match on their own screen</div>`;
-  document.getElementById("demoTools").classList.toggle("hidden", !lease.demo);
+  const iAmTenant = lease.tenantUsername === username;
+  const other = otherParty(lease);
+  const parts = [
+    `You (${iAmTenant ? "tenant" : "landlord"})`,
+    `${iAmTenant ? "Landlord" : "Tenant"}: ${escapeHtml(displayName(other))}`,
+    lease.rentAmount ? fmtMoney(lease.rentAmount) + "/month" : "Rent not set"
+  ];
+  if (lease.startDate) parts.push("since " + fmtDate(lease.startDate));
+  document.getElementById("lv_meta").innerHTML = parts.join(" · ");
 
-  const endwrap = document.getElementById("lv_endwrap");
-  const logsection = document.getElementById("lv_logsection");
-  if (lease.status === "active") {
-    endwrap.innerHTML = `<button class="btn danger" onclick="endLease()">End lease</button>`;
-    logsection.classList.remove("hidden");
-  } else {
-    endwrap.innerHTML = `<span class="badge ended">lease ended</span>`;
-    logsection.classList.add("hidden");
+  const conn = document.getElementById("lv_conn");
+  const ok = connectionConfirmed(lease, fingerprints);
+  conn.className = "conn-badge " + (ok ? "ok" : "todo");
+  conn.innerHTML = ok ? `${icon("check", 14)} Verified connection` : `${icon("shield", 14)} Check your connection`;
+
+  document.getElementById("demoTools").classList.toggle("hidden", !lease.demo);
+  document.getElementById("lv_menuwrap").classList.toggle("hidden", lease.status !== "active");
+  document.getElementById("lv_logsection").classList.toggle("hidden", lease.status !== "active");
+  document.getElementById("waitThemName").textContent = displayName(other);
+  renderChips();
+}
+
+function openConnectionModal() {
+  const d = lastDetail;
+  if (!d) return;
+  const lease = d.lease;
+  const me = username;
+  const other = otherParty(lease);
+  const ok = connectionConfirmed(lease, d.fingerprints);
+  openModal(modalHead("Check your connection") + `<div class="modal-body">
+    <div class="fp-pair">
+      <div class="fp-col"><span class="muted">You</span><div class="fp-box mono">${escapeHtml(d.fingerprints[me])}</div></div>
+      <div class="fp-col"><span class="muted">${escapeHtml(displayName(other))}</span><div class="fp-box mono">${escapeHtml(d.fingerprints[other])}</div></div>
+    </div>
+    <p>Ask the other person to read their code aloud. If it matches, you're connected to the right person.</p>
+    <p class="muted">Each of you should see the same two codes on your own screen. If they differ, don't sign anything and contact the other person another way.</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" data-autofocus onclick="confirmConnection()">${ok ? "Codes still match" : "The codes match"}</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div></div>`);
+}
+
+function confirmConnection() {
+  const d = lastDetail;
+  const lease = d.lease;
+  try {
+    localStorage.setItem(fpConfirmKey(lease), JSON.stringify({ a: d.fingerprints[lease.tenantUsername], b: d.fingerprints[lease.landlordUsername] }));
+  } catch (e) {}
+  closeModal();
+  renderLeaseHead(lease, d.fingerprints);
+  showToast("Connection marked as verified on this device.", true);
+}
+
+function confirmEndLease() {
+  closeMenus();
+  openModal(modalHead("End this lease?") + `<div class="modal-body"><p>The record stays visible and can still be verified, but no new events can be added.</p><div class="btn-row"><button class="btn btn-danger-solid" onclick="endLease()">End lease</button><button class="btn btn-ghost" data-autofocus onclick="closeModal()">Keep it open</button></div></div>`);
+}
+
+async function endLease() {
+  closeModal();
+  try {
+    await api(`/api/leases/${currentLeaseId}/end`, { method: "POST" });
+    refreshLeaseView();
+  } catch (e) {
+    showToast(e.message);
   }
 }
 
 function renderStats(lease, blocks, pending, rent) {
-  const totalPaid = blocks.filter((b) => b.type === "PAYMENT" && b.data.amount)
-    .reduce((sum, b) => sum + Number(b.data.amount), 0);
-  const needsMe = pending.filter((e) => !e.confirmedBy.includes(username)).length;
-  const rentColors = { Paid: "var(--forest)", Due: "var(--awaiting)", Overdue: "var(--brick)" };
-  const rentStatus = { text: rent.status, color: rentColors[rent.status] || "var(--text-on-ink-dim)" };
-  const stats = [
-    { num: rentStatus.text, lbl: "rent this month", color: rentStatus.color },
-    { num: blocks.length, lbl: "events recorded" },
-    { num: totalPaid ? "₹" + totalPaid.toLocaleString("en-IN") : "—", lbl: "total paid logged" },
-    { num: needsMe, lbl: "waiting on you" },
-    { num: lease.status, lbl: "lease status" },
-  ];
-  document.getElementById("lv_stats").innerHTML = stats.map((s) =>
-    `<div class="stat"><div class="num" style="${s.color ? "color:" + s.color : ""}">${s.num}</div><div class="lbl">${s.lbl}</div></div>`
+  const needsMe = pending.filter((e) => e.proposedBy !== username).length;
+  const monthName = new Date().toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" });
+  const bits = [];
+  if (lease.status === "ended") bits.push(`<span class="pill pill-neutral">Lease ended</span>`);
+  else if (rent && rent.status !== "Not tracked") bits.push(`<span class="bit">${monthName} rent: <span class="pill ${rentPillClass(rent.status)}">${escapeHtml(rent.status)}</span></span>`);
+  else bits.push(`<span class="pill pill-neutral">Active</span>`);
+  if (blocks.length > 0) bits.push(`<span class="bit">${blocks.length} ${blocks.length === 1 ? "event" : "events"}</span>`);
+  if (needsMe > 0) bits.push(`<span class="pill pill-amber">${needsMe} waiting on you</span>`);
+  else if (lease.status === "active") bits.push(`<span class="bit muted">nothing waiting on you</span>`);
+  document.getElementById("lv_stats").innerHTML = bits.join(`<span class="dot-sep" aria-hidden="true">·</span>`);
+}
+
+function renderChips() {
+  document.getElementById("chipRow").innerHTML = CHIPS.map((c) =>
+    `<button type="button" class="chip ${c.id === selectedChip ? "active" : ""}" role="radio" aria-checked="${c.id === selectedChip}" onclick="selectChip('${c.id}')">${icon(c.icon, 16)}<span>${c.label}</span></button>`
+  ).join("");
+  const rent = selectedChip === "RENT";
+  document.getElementById("rentFields").classList.toggle("hidden", !rent);
+  if (rent && !document.getElementById("eventDate").value) document.getElementById("eventDate").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("photoHint").textContent = rent ? "One receipt photo, 5 MB" : `Up to ${MAX_PHOTOS} photos, 5 MB each`;
+}
+
+function selectChip(id) {
+  selectedChip = id;
+  if (id === "RENT" && pendingPhotos.length > 1) {
+    pendingPhotos.slice(1).forEach((p) => URL.revokeObjectURL(p.url));
+    pendingPhotos = pendingPhotos.slice(0, 1);
+    renderThumbs();
+  }
+  renderChips();
+}
+
+function startMoveIn() {
+  selectChip("MOVE_IN");
+  const box = document.getElementById("lv_logsection");
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("photoDrop").focus();
+}
+
+function addPhotos(fileList) {
+  const limit = selectedChip === "RENT" ? 1 : MAX_PHOTOS;
+  let skipped = 0;
+  for (const f of Array.from(fileList)) {
+    if (!f.type.startsWith("image/")) { skipped++; continue; }
+    if (pendingPhotos.length >= limit) { skipped++; continue; }
+    pendingPhotos.push({ file: f, url: URL.createObjectURL(f) });
+  }
+  if (skipped) showToast(skipped + (skipped === 1 ? " file was skipped" : " files were skipped") + ": only images, up to " + limit + ".");
+  renderThumbs();
+}
+
+function removePhoto(i) {
+  URL.revokeObjectURL(pendingPhotos[i].url);
+  pendingPhotos.splice(i, 1);
+  renderThumbs();
+}
+
+function renderThumbs() {
+  document.getElementById("photoThumbs").innerHTML = pendingPhotos.map((p, i) =>
+    `<div class="thumb"><img src="${p.url}" alt="Selected photo ${i + 1}"><button type="button" class="thumb-x" aria-label="Remove photo ${i + 1}" onclick="removePhoto(${i})">&times;</button></div>`
   ).join("");
 }
 
-function onEventTypeChange() {
-  const isPayment = document.getElementById("eventType").value === "PAYMENT";
-  document.getElementById("amountWrap").classList.toggle("hidden", !isPayment);
+function resetComposer() {
+  pendingPhotos.forEach((p) => URL.revokeObjectURL(p.url));
+  pendingPhotos = [];
+  selectedChip = "MOVE_IN";
+  document.getElementById("eventDesc").value = "";
+  document.getElementById("eventAmount").value = "";
+  document.getElementById("eventDate").value = "";
+  document.getElementById("eventPhoto").value = "";
+  renderThumbs();
+  renderChips();
+}
+
+function wireDropzone() {
+  const zone = document.getElementById("photoDrop");
+  const input = document.getElementById("eventPhoto");
+  zone.addEventListener("click", (e) => { if (e.target !== input) input.click(); });
+  zone.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); } });
+  input.addEventListener("change", () => { addPhotos(input.files); input.value = ""; });
+  ["dragenter", "dragover"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.remove("over"); }));
+  zone.addEventListener("drop", (e) => { if (e.dataTransfer && e.dataTransfer.files) addPhotos(e.dataTransfer.files); });
 }
 
 async function proposeEvent() {
-  const type = document.getElementById("eventType").value;
-  const description = document.getElementById("eventDesc").value.trim();
+  if (!ensureKey()) return;
+  const chip = CHIPS.find((c) => c.id === selectedChip);
+  const typed = document.getElementById("eventDesc").value.trim();
   const amount = document.getElementById("eventAmount").value;
-  let photoFile = document.getElementById("eventPhoto").files[0];
-  const data = { description };
-  if (type === "PAYMENT" && amount) data.amount = Number(amount);
+  const paidOn = document.getElementById("eventDate").value;
+  const isRent = chip.type === "PAYMENT";
+  if (isRent && !(Number(amount) > 0)) { showMsg("eventMsg", "Enter the amount paid.", false); return; }
+  if (!typed && pendingPhotos.length === 0 && !isRent) { showMsg("eventMsg", "Add a note or at least one photo.", false); return; }
 
+  let base = chip.prefix + typed;
+  if (isRent) base = ("Rent paid" + (paidOn ? " on " + fmtDate(paidOn) : "") + (typed ? " — " + typed : ""));
+
+  const files = pendingPhotos.length ? pendingPhotos.map((p) => p.file) : [null];
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  let sent = 0;
   try {
-    if (photoFile) {
-      photoFile = await shrinkImage(photoFile, 1600, 0.8);
-      data.photoHash = await sha256Hex(await photoFile.arrayBuffer());
+    for (let i = 0; i < files.length; i++) {
+      const description = files.length > 1 ? `${base} (photo ${i + 1} of ${files.length})` : base;
+      const data = { description };
+      if (isRent && i === 0) data.amount = Number(amount);
+      let photoFile = files[i];
+      if (photoFile) {
+        photoFile = await shrinkImage(photoFile, 1600, 0.8);
+        data.photoHash = await sha256Hex(await photoFile.arrayBuffer());
+      }
+      const id = "evt-" + bytesToHex(crypto.getRandomValues(new Uint8Array(4)));
+      const createdAt = new Date().toISOString();
+      const payload = payloadFor(currentLeaseId, { id, type: chip.type, data, proposedBy: username, createdAt });
+      const signature = await signMessage(stableStringify(payload));
+      let body;
+      if (photoFile) {
+        body = new FormData();
+        body.append("type", chip.type);
+        body.append("id", id);
+        body.append("createdAt", createdAt);
+        body.append("signature", signature);
+        body.append("data", JSON.stringify(data));
+        body.append("photo", photoFile, "photo.jpg");
+      } else {
+        body = JSON.stringify({ type: chip.type, id, createdAt, signature, data });
+      }
+      await api(`/api/leases/${currentLeaseId}/events`, { method: "POST", body });
+      sent++;
     }
-    const id = "evt-" + bytesToHex(crypto.getRandomValues(new Uint8Array(4)));
-    const createdAt = new Date().toISOString();
-    const payload = payloadFor(currentLeaseId, { id, type, data, proposedBy: username, createdAt });
-    const signature = await signMessage(stableStringify(payload));
-
-    let body;
-    if (photoFile) {
-      body = new FormData();
-      body.append("type", type);
-      body.append("id", id);
-      body.append("createdAt", createdAt);
-      body.append("signature", signature);
-      body.append("data", JSON.stringify(data));
-      body.append("photo", photoFile, "photo.jpg");
-    } else {
-      body = JSON.stringify({ type, id, createdAt, signature, data });
-    }
-    await api(`/api/leases/${currentLeaseId}/events`, { method: "POST", body });
-    showMsg("eventMsg", "Event signed and proposed. Waiting for the other party to confirm.", true);
-    document.getElementById("eventDesc").value = "";
-    document.getElementById("eventAmount").value = "";
-    document.getElementById("eventPhoto").value = "";
+    const who = displayName(otherParty(lastDetail.lease));
+    showMsg("eventMsg", sent > 1 ? `${sent} events sent. ${who} will see them under "Waiting on you".` : `Sent. ${who} will see it under "Waiting on you".`, true);
+    resetComposer();
     refreshLeaseView();
   } catch (e) {
-    showMsg("eventMsg", e.message, false);
+    showMsg("eventMsg", (sent ? `${sent} sent, then it stopped: ` : "") + e.message, false);
+    if (sent) refreshLeaseView();
+  } finally {
+    btn.disabled = false;
   }
 }
 
 async function confirmEvent(eventId) {
+  if (!ensureKey()) return;
   try {
     const ev = lastDetail.pendingEvents.find((x) => x.id === eventId);
     const message = stableStringify(payloadFor(currentLeaseId, ev));
     const proposerKey = lastDetail.publicKeys[ev.proposedBy];
     if (!(await verifyWith(proposerKey, message, ev.proposerSignature))) {
-      throw new Error("The proposer's signature on this event does not verify. Do not confirm it.");
+      throw new Error("The other person's signature on this event does not verify. Do not confirm it.");
     }
     if (ev.photoId) {
       const r = await fetch(`/api/leases/${currentLeaseId}/photos/${ev.photoId}`, { headers: { Authorization: "Bearer " + token } });
       const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
-      if (hash !== ev.data.photoHash) throw new Error("The photo on the server does not match the hash the proposer signed. Do not confirm it.");
+      if (hash !== ev.data.photoHash) throw new Error("The photo on the server does not match the one that was signed. Do not confirm it.");
     }
     const signature = await signMessage(message);
     await api(`/api/leases/${currentLeaseId}/events/${eventId}/confirm`, { method: "POST", body: JSON.stringify({ signature }) });
-    showMsg("eventMsg", "Signed by both parties and added to the ledger.", true);
+    showMsg("eventMsg", "Signed by both of you and added to the ledger.", true);
     refreshLeaseView();
   } catch (e) {
     showMsg("eventMsg", e.message, false);
+    document.getElementById("eventMsg").scrollIntoView({ behavior: "smooth", block: "center" });
   }
+}
+
+function pendingCard(e, mine, lease) {
+  const kind = eventKind(e.type, e.data.description);
+  const amount = e.data.amount ? ` · ${fmtMoney(e.data.amount)}` : "";
+  const photo = e.photoId ? `<div class="thumb-row"><button class="thumb-btn" onclick="openLightbox(this)" aria-label="Open photo"><img data-photo="${e.photoId}" alt="Evidence photo"></button></div>` : "";
+  const proposer = mine ? "You" : displayName(e.proposedBy);
+  return `<div class="card event-card">
+    <div class="event-top"><span class="kind">${icon(kind.icon, 16)} ${kind.label}</span><span class="pill pill-amber">Not signed by both yet</span></div>
+    ${photo}
+    <p class="event-text">${escapeHtml(kind.text)}${amount}</p>
+    <p class="muted small">${proposer} sent this on ${fmtDateTime(e.createdAt)}</p>
+    ${mine ? "" : `<div class="btn-row"><button class="btn btn-primary" onclick="confirmEvent('${e.id}')">Confirm and sign</button></div>`}
+  </div>`;
 }
 
 function renderPending(events, lease) {
-  const el = document.getElementById("pendingList");
-  if (events.length === 0) { el.innerHTML = `<div class="empty">Nothing waiting on confirmation.</div>`; return; }
-  el.innerHTML = events.map((e) => {
-    const needs = [lease.tenantUsername, lease.landlordUsername].filter((u) => !e.confirmedBy.includes(u));
-    const mine = e.proposedBy === username;
-    const amountStr = e.data.amount ? ` &middot; ₹${e.data.amount}` : "";
-    const photoHtml = e.photoId ? `<img data-photo="${e.photoId}" class="evphoto" alt="evidence photo">` : "";
-    return `<div class="evcard">
-      <div class="top"><span class="evtype">${e.type.replace("_", " ").toLowerCase()}</span><span class="badge pending">pending</span></div>
-      ${photoHtml}
-      <div class="evdesc">${escapeHtml(e.data.description || "")}${amountStr}</div>
-      <div class="evwho">Proposed by <b>${escapeHtml(e.proposedBy)}</b> &middot; waiting on ${needs.join(", ") || "finalizing"}</div>
-      ${mine ? "" : `<div class="btnrow"><button class="btn" onclick="confirmEvent('${e.id}')">Check and sign this</button></div>`}
-    </div>`;
-  }).join("");
+  const you = events.filter((e) => e.proposedBy !== username);
+  const them = events.filter((e) => e.proposedBy === username);
+  document.getElementById("waitYou").classList.toggle("hidden", you.length === 0);
+  document.getElementById("waitThem").classList.toggle("hidden", them.length === 0);
+  document.getElementById("pendingYou").innerHTML = you.map((e) => pendingCard(e, false, lease)).join("");
+  document.getElementById("pendingThem").innerHTML = them.map((e) => pendingCard(e, true, lease)).join("");
 }
 
 function renderBlocks(blocks) {
+  const wrap = document.getElementById("ledgerWrap");
+  wrap.classList.toggle("hidden", blocks.length === 0);
   const el = document.getElementById("blockList");
-  if (blocks.length === 0) { el.innerHTML = `<div class="empty">No confirmed events yet.</div>`; return; }
+  if (blocks.length === 0) { el.innerHTML = ""; return; }
   el.innerHTML = blocks.slice().reverse().map((b) => {
-    const amountStr = b.data.amount ? ` &middot; ₹${b.data.amount}` : "";
-    const photoHtml = b.photoId
-      ? `<img data-photo="${b.photoId}" class="evphoto" alt="evidence photo"><div class="hash" title="${b.data.photoHash}">photo hash: ${b.data.photoHash.slice(0, 24)}...</div>
-         <div class="btnrow"><button class="btn" onclick="verifyPhoto('${b.photoId}', 'pv-${b.index}')">Verify photo</button></div>
+    const kind = eventKind(b.type, b.data.description);
+    const amount = b.data.amount ? ` · ${fmtMoney(b.data.amount)}` : "";
+    const photo = b.photoId ? `<div class="thumb-row"><button class="thumb-btn" onclick="openLightbox(this)" aria-label="Open photo"><img data-photo="${b.photoId}" alt="Evidence photo"></button></div>` : "";
+    const photoTech = b.photoId
+      ? `<div class="tech-row"><span class="muted">Photo hash</span><span class="mono" title="${b.data.photoHash}">${b.data.photoHash.slice(0, 24)}…</span></div>
+         <div class="btn-row tight"><button class="btn btn-secondary btn-sm" onclick="verifyPhoto('${b.photoId}', 'pv-${b.index}')">Verify photo</button></div>
          <div class="pvres" id="pv-${b.index}"></div>`
       : "";
-    return `<div class="block">
-      <div class="top"><span class="idx">#${b.index}</span><span class="badge active">${b.type.replace("_", " ").toLowerCase()}</span></div>
-      ${photoHtml}
-      <div class="desc">${escapeHtml(b.data.description || "")}${amountStr}</div>
-      <div class="sigs">signed by ${escapeHtml(b.proposedBy)} and ${escapeHtml(b.confirmedBy)} &middot; ${escapeHtml(b.finalizedAt.slice(0, 16).replace("T", " "))} UTC</div>
-      <div class="hash" title="${b.blockHash}">block hash: ${b.blockHash.slice(0, 24)}...</div>
+    return `<div class="tl-item">
+      <div class="tl-date"><strong>${fmtDate(b.finalizedAt)}</strong><span class="muted small">${new Date(b.finalizedAt).toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit" })}</span></div>
+      <div class="tl-rail" aria-hidden="true"><span class="tl-dot"></span></div>
+      <div class="card event-card tl-card">
+        <div class="event-top"><span class="kind">${icon(kind.icon, 16)} ${kind.label}</span><span class="signed">${icon("checks", 16)} Signed by both</span></div>
+        ${photo}
+        <p class="event-text">${escapeHtml(kind.text)}${amount}</p>
+        <details class="tech">
+          <summary>Signing details</summary>
+          <div class="tech-row"><span class="muted">Sent by</span><span>${escapeHtml(displayName(b.proposedBy))}</span></div>
+          <div class="tech-row"><span class="muted">Confirmed by</span><span>${escapeHtml(displayName(b.confirmedBy))}</span></div>
+          <div class="tech-row"><span class="muted">Locked</span><span>${fmtDateTime(b.finalizedAt)}</span></div>
+          <div class="tech-row"><span class="muted">Entry no.</span><span>#${b.index}</span></div>
+          <div class="tech-row"><span class="muted">Block hash</span><span class="mono" title="${b.blockHash}">${b.blockHash.slice(0, 24)}…</span></div>
+          ${photoTech}
+        </details>
+      </div>
     </div>`;
   }).join("");
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
-async function endLease() {
-  if (!confirm("End this lease? Its history stays visible, but no new events can be logged.")) return;
-  try {
-    await api(`/api/leases/${currentLeaseId}/end`, { method: "POST" });
-    refreshLeaseView();
-  } catch (e) {
-    showMsg("eventMsg", e.message, false);
-  }
+function openLightbox(btn) {
+  const img = btn.querySelector("img");
+  if (!img || !img.src) return;
+  openModal(`<div class="lightbox"><button class="icon-btn lb-close" aria-label="Close" onclick="closeModal()">&times;</button><img src="${img.src}" alt="Evidence photo, full size"></div>`, true);
 }
 
 async function verifyChain() {
   try {
     const res = await api(`/api/leases/${currentLeaseId}/chain/verify`);
-    showMsg("chainMsg", res.valid ? "Valid — no tampering detected across the whole ledger." : `Invalid — ${res.reason}`, res.valid);
+    showMsg("chainMsg", res.valid ? "The server found no changes anywhere in the record." : `The server found a problem. ${res.reason}`, res.valid);
   } catch (e) {
     showMsg("chainMsg", e.message, false);
   }
@@ -766,10 +1196,10 @@ async function verifyChain() {
 async function tamperDemo(rehash) {
   try {
     const res = await api(`/api/leases/${currentLeaseId}/chain/demo-tamper`, { method: "POST", body: JSON.stringify({ blockIndex: 0, rehash }) });
-    showMsg("chainMsg", res.message, false);
+    showMsg("demoMsg", res.message, false);
     refreshLeaseView();
   } catch (e) {
-    showMsg("chainMsg", e.message, false);
+    showMsg("demoMsg", e.message, false);
   }
 }
 
@@ -782,7 +1212,7 @@ async function exportPacket() {
     const a = document.createElement("a");
     a.href = url; a.download = `dispute-export-${currentLeaseId}.json`; a.click();
     URL.revokeObjectURL(url);
-    showMsg("chainMsg", "Dispute export packet downloaded.", true);
+    showMsg("chainMsg", "Dispute packet downloaded.", true);
   } catch (e) {
     showMsg("chainMsg", e.message, false);
   }
@@ -794,24 +1224,24 @@ async function clientVerify(detail, withPhotos) {
   let prev = "0".repeat(64);
   let photosChecked = 0;
   for (const b of chain.blocks) {
-    const bad = (reason) => ({ valid: false, index: b.index, reason: `Block ${b.index}: ${reason}` });
-    if (b.prevHash !== prev) return bad("does not link to the previous block.");
+    const bad = (reason) => ({ valid: false, index: b.index, reason: `Entry ${b.index}: ${reason}` });
+    if (b.prevHash !== prev) return bad("does not link to the entry before it.");
     const message = stableStringify(payloadFor(lease.id, { id: b.eventId, type: b.type, data: b.data, proposedBy: b.proposedBy, createdAt: b.createdAt }));
-    if ((await sha256Hex(enc.encode(message))) !== b.dataHash) return bad("the recorded event data does not match its hash.");
+    if ((await sha256Hex(enc.encode(message))) !== b.dataHash) return bad("the recorded details do not match their hash.");
     const blockHash = await sha256Hex(enc.encode(stableStringify({
       index: b.index, finalizedAt: b.finalizedAt, photoId: b.photoId, confirmedBy: b.confirmedBy,
       proposerSignature: b.proposerSignature, confirmerSignature: b.confirmerSignature, prevHash: b.prevHash, dataHash: b.dataHash,
     })));
-    if (blockHash !== b.blockHash) return bad("the stored block hash is inconsistent with its contents.");
+    if (blockHash !== b.blockHash) return bad("the stored hash is inconsistent with its contents.");
     if (b.proposedBy === b.confirmedBy || !parties.includes(b.proposedBy) || !parties.includes(b.confirmedBy)) {
-      return bad("signers are not the two parties of this lease.");
+      return bad("the signers are not the two people on this lease.");
     }
-    if (!(await verifyWith(publicKeys[b.proposedBy], message, b.proposerSignature))) return bad(`the signature of ${b.proposedBy} does not verify.`);
-    if (!(await verifyWith(publicKeys[b.confirmedBy], message, b.confirmerSignature))) return bad(`the signature of ${b.confirmedBy} does not verify.`);
+    if (!(await verifyWith(publicKeys[b.proposedBy], message, b.proposerSignature))) return bad(`the signature of ${displayName(b.proposedBy)} does not verify.`);
+    if (!(await verifyWith(publicKeys[b.confirmedBy], message, b.confirmerSignature))) return bad(`the signature of ${displayName(b.confirmedBy)} does not verify.`);
     if (withPhotos && b.photoId) {
       const r = await fetch(`/api/leases/${lease.id}/photos/${b.photoId}`, { headers: { Authorization: "Bearer " + token } });
       const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
-      if (hash !== b.data.photoHash) return bad("the stored photo no longer matches the hash that was signed.");
+      if (hash !== b.data.photoHash) return bad("the stored photo no longer matches the one that was signed.");
       photosChecked++;
     }
     prev = b.blockHash;
@@ -829,7 +1259,7 @@ function checkRollback(detail) {
   if (!seen) return null;
   const block = detail.chain.blocks[seen.index];
   if (!block || block.blockHash !== seen.blockHash) {
-    return `The server's record no longer contains block #${seen.index} that you last saw. History has been removed or rewritten.`;
+    return `The record no longer contains entry #${seen.index} that you last saw. History has been removed or rewritten.`;
   }
   return null;
 }
@@ -846,16 +1276,16 @@ async function runSilentVerify(detail) {
   const result = await clientVerify(detail, false);
   const rollback = checkRollback(detail);
   if (!result.valid) {
-    chip.className = "verifychip bad";
-    chip.textContent = "Warning: your browser checked every hash and signature and found a problem. " + result.reason;
+    chip.className = "verify-line bad";
+    chip.innerHTML = `<strong>Warning:</strong> your browser checked every hash and signature and found a problem. ${escapeHtml(result.reason)}`;
   } else if (rollback) {
-    chip.className = "verifychip bad";
-    chip.textContent = "Warning: " + rollback;
+    chip.className = "verify-line bad";
+    chip.innerHTML = `<strong>Warning:</strong> ${escapeHtml(rollback)}`;
   } else {
-    chip.className = "verifychip ok";
-    chip.textContent = result.blocks === 0
-      ? "No events yet. Everything recorded here will be signed by both of you."
-      : `Checked in your browser: all ${result.blocks} events have valid hashes and valid signatures from both parties.`;
+    chip.className = "verify-line ok";
+    chip.innerHTML = result.blocks === 0
+      ? `${icon("shield", 16)} Nothing recorded yet. Everything added here will be signed by both of you.`
+      : `${icon("check", 16)} Checked in your browser: all ${result.blocks} ${result.blocks === 1 ? "entry has" : "entries have"} valid hashes and valid signatures from both of you.`;
     rememberHead(detail);
   }
 }
@@ -865,15 +1295,16 @@ async function verifyInBrowser() {
     const detail = await api(`/api/leases/${currentLeaseId}`);
     const result = await clientVerify(detail, true);
     const rollback = checkRollback(detail);
-    if (!result.valid) showMsg("chainMsg", "Invalid: " + result.reason, false);
-    else if (rollback) showMsg("chainMsg", "Invalid: " + rollback, false);
-    else showMsg("chainMsg", `Valid. Your browser re-checked ${result.blocks} events, all signatures and ${result.photosChecked} photos without trusting the server.`, true);
+    if (!result.valid) showMsg("chainMsg", "Problem found. " + result.reason, false);
+    else if (rollback) showMsg("chainMsg", "Problem found. " + rollback, false);
+    else showMsg("chainMsg", `Everything checks out. Your browser re-checked ${result.blocks} ${result.blocks === 1 ? "entry" : "entries"}, every signature and ${result.photosChecked} ${result.photosChecked === 1 ? "photo" : "photos"} without trusting the server.`, true);
   } catch (e) {
     showMsg("chainMsg", e.message, false);
   }
 }
 
 async function downloadReceipt() {
+  if (!ensureKey()) return;
   try {
     const detail = await api(`/api/leases/${currentLeaseId}`);
     const blocks = detail.chain.blocks;
@@ -888,9 +1319,27 @@ async function downloadReceipt() {
   }
 }
 
-async function checkReceipt(input) {
-  const file = input.files[0];
-  if (!file) return;
+function openReceiptModal() {
+  openModal(modalHead("Check a receipt") + `<div class="modal-body">
+    <p>Choose a receipt you downloaded earlier. We'll check that it is genuine and that the record still matches it.</p>
+    <div class="dropzone" id="receiptDrop" tabindex="0" role="button" aria-label="Choose a receipt file">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+      <span>Drop files here or <u>browse</u></span>
+      <small>A receipt .json file</small>
+      <input id="receiptInput" type="file" accept="application/json" hidden>
+    </div></div>`);
+  const zone = document.getElementById("receiptDrop");
+  const input = document.getElementById("receiptInput");
+  zone.addEventListener("click", (e) => { if (e.target !== input) input.click(); });
+  zone.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); } });
+  input.addEventListener("change", () => { if (input.files[0]) checkReceiptFile(input.files[0]); });
+  ["dragenter", "dragover"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.remove("over"); }));
+  zone.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) checkReceiptFile(e.dataTransfer.files[0]); });
+}
+
+async function checkReceiptFile(file) {
+  closeModal();
   try {
     const parsed = JSON.parse(await file.text());
     const detail = await api(`/api/leases/${currentLeaseId}`);
@@ -900,17 +1349,17 @@ async function checkReceipt(input) {
     if (!(await verifyWith(parsed.publicKey, stableStringify(r), parsed.signature))) throw new Error("The receipt's signature is not valid.");
     const block = detail.chain.blocks[r.headIndex];
     if (!block || block.blockHash !== r.headHash) {
-      showMsg("chainMsg", `The receipt is genuine, but the record no longer matches it: block #${r.headIndex} is missing or different. History was changed after ${r.issuedAt}.`, false);
+      showMsg("chainMsg", `The receipt is genuine, but the record no longer matches it: entry #${r.headIndex} is missing or different. History was changed after ${fmtDateTime(r.issuedAt)}.`, false);
     } else {
-      showMsg("chainMsg", `The receipt is genuine and the record still matches it up to block #${r.headIndex}.`, true);
+      showMsg("chainMsg", `The receipt is genuine and the record still matches it up to entry #${r.headIndex}.`, true);
     }
   } catch (e) {
-    showMsg("chainMsg", e.message, false);
+    showMsg("chainMsg", e.message || "Could not read that receipt.", false);
   }
-  input.value = "";
 }
 
-if (token) { enterApp(); }
+wireDropzone();
+render();
 </script>
 </body>
 </html>
