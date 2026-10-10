@@ -8,7 +8,11 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "demo": "node src/chain/demo.js"
+    "demo": "node src/chain/demo.js",
+    "attacks": "node tests/chain-attacks.js",
+    "test:api": "node tests/api-checks.js",
+    "seed": "node scripts/seed.js",
+    "compare": "node tests/baseline-compare.js"
   },
   "dependencies": {
     "express": "^4.19.2",
