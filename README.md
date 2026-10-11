@@ -23,6 +23,7 @@ If anyone edits an old block, its hash stops matching. If they recompute the has
 - Key backup and import, plus fingerprints so the two people can confirm they hold the right keys.
 - Export of all blocks and public keys as a dispute packet.
 - Demo leases with a tamper simulator, so you can watch an attack get caught.
+- An attack lab at `/lab.html` that runs the same administrator attacks on a plain chain, a server-signed chain and this design, side by side in the browser.
 
 ## Limits you should know about
 
@@ -95,6 +96,7 @@ src/utils/access.js      who can see which lease
 src/utils/rent.js        rent status
 src/routes/              auth, leases, events, chain, photos
 public/index.html        the page and all front-end logic
+public/lab.html          the attack lab (standalone page)
 public/styles.css        design tokens and styles
 src/demo/                sample rental created at start-up
 ```
