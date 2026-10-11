@@ -66,7 +66,7 @@ router.get("/export", requireAuth, asyncHandler(async (req, res) => {
     integrityCheck: chain.verifyChain(keys),
     blocks: chain.blocks,
     howToVerify:
-      "For each block: rebuild the payload {v:1, leaseId, eventId, type, data, proposedBy, createdAt}, serialise it with keys sorted, and check its SHA-256 equals dataHash. Check both Ed25519 signatures (proposerSignature, confirmerSignature) over that serialised payload using the listed public keys. Check blockHash and that prevHash equals the previous blockHash.",
+      "For each block: rebuild the payload {v:1, leaseId, eventId, type, data, proposedBy, createdAt}, serialise it with keys sorted, and check its SHA-256 equals dataHash. Check the proposerSignature over that serialised payload, and the confirmerSignature over the serialised object {payload, prevHash} (the payload plus the previous block's hash), using the listed public keys. Check blockHash and that prevHash equals the previous blockHash.",
   };
 
   res.setHeader("Content-Disposition", `attachment; filename="dispute-export-${lease.id}.json"`);
