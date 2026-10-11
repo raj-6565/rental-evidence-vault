@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { RentalEvidenceChain, eventPayload } = require("./hashChain");
+const { RentalEvidenceChain, eventPayload, confirmerMessage } = require("./hashChain");
 const { stableStringify } = require("../utils/crypto");
 
 function newKeyPair() {
@@ -27,7 +27,7 @@ function record(type, data, proposer, proposerKey, confirmer, confirmerKey) {
   };
   const message = stableStringify(eventPayload(chain.leaseId, event));
   event.proposerSignature = sign(proposerKey, message);
-  chain.addSignedEvent({ event, confirmedBy: confirmer, confirmerSignature: sign(confirmerKey, message) });
+  chain.addSignedEvent({ event, confirmedBy: confirmer, confirmerSignature: sign(confirmerKey, confirmerMessage(chain.leaseId, event, chain.headHash())) });
 }
 
 record("MOVE_IN", { description: "Small crack near window, otherwise clean" }, "priya", tenant.privateKey, "ravi", landlord.privateKey);
