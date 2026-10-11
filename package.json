@@ -11,7 +11,6 @@
     "demo": "node src/chain/demo.js",
     "attacks": "node tests/chain-attacks.js",
     "test:api": "node tests/api-checks.js",
-    "seed": "node scripts/seed.js",
     "compare": "node tests/baseline-compare.js"
   },
   "dependencies": {
