@@ -695,6 +695,7 @@ function renderHeader() {
         <div class="menu-head"><strong>${escapeHtml(name)}</strong><span class="muted">${escapeHtml(role || "")} · @${escapeHtml(username)}</span></div>
         <button class="menu-item" onclick="closeMenus(); downloadKeyBackup()">Back up key</button>
         <button class="menu-item" onclick="closeMenus(); openMyFingerprint()">Your key fingerprint</button>
+        <button class="menu-item" onclick="location.href='/lab.html'">Attack lab</button>
         <button class="menu-item" onclick="closeMenus(); logout()">Log out</button>
       </div>
     </div>`;
