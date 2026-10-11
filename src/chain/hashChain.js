@@ -14,6 +14,10 @@ function eventPayload(leaseId, event) {
   };
 }
 
+function confirmerMessage(leaseId, event, prevHash) {
+  return stableStringify({ payload: eventPayload(leaseId, event), prevHash });
+}
+
 function computeBlockHash(block) {
   return sha256({
     index: block.index,
@@ -31,6 +35,11 @@ class RentalEvidenceChain {
   constructor(leaseId) {
     this.leaseId = leaseId;
     this.blocks = [];
+  }
+
+  headHash() {
+    const last = this.blocks[this.blocks.length - 1];
+    return last ? last.blockHash : GENESIS_HASH;
   }
 
   addSignedEvent({ event, confirmedBy, confirmerSignature }) {
@@ -89,7 +98,8 @@ class RentalEvidenceChain {
       if (!verifySignature(publicKeys[block.proposedBy], message, block.proposerSignature)) {
         return fail(`the signature of ${block.proposedBy} does not verify.`);
       }
-      if (!verifySignature(publicKeys[block.confirmedBy], message, block.confirmerSignature)) {
+      const confirmMessage = stableStringify({ payload, prevHash: block.prevHash });
+      if (!verifySignature(publicKeys[block.confirmedBy], confirmMessage, block.confirmerSignature)) {
         return fail(`the signature of ${block.confirmedBy} does not verify.`);
       }
 
@@ -133,4 +143,4 @@ class RentalEvidenceChain {
   }
 }
 
-module.exports = { RentalEvidenceChain, GENESIS_HASH, eventPayload };
+module.exports = { RentalEvidenceChain, GENESIS_HASH, eventPayload, confirmerMessage };
