@@ -32,19 +32,34 @@
 
 <section id="landingView" class="hidden">
   <div class="hero">
-    <div class="container hero-inner">
-      <p class="eyebrow">Tenancy records for tenants and landlords</p>
-      <h1>One shared, signed record of every tenancy.</h1>
-      <p class="lead">Document move-in condition, rent payments and repairs together. Each entry is confirmed and digitally signed by both parties, so the record stays accurate, and any later change to it can be detected.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="/login?mode=register" onclick="go('/login?mode=register', event)">Get started</a>
-        <a class="btn btn-secondary btn-lg" href="#how" onclick="goSection('how', event)">How it works</a>
+    <div class="container hero-inner hero-split">
+      <div class="hero-copy">
+        <h1>A shared rental record that neither side can quietly change.</h1>
+        <p class="lead">Keep move-in condition, rent payments and repairs in one place. Every entry needs the signature of both tenant and landlord, so any later change can be detected.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="/login?mode=register" onclick="go('/login?mode=register', event)">Get started</a>
+        </div>
+        <ul class="hero-points">
+          <li>Signed by both parties</li>
+          <li>Checked in your own browser</li>
+          <li>No blockchain, wallet or fees</li>
+        </ul>
       </div>
-      <ul class="hero-points">
-        <li>Signed by both parties</li>
-        <li>Checked in your own browser</li>
-        <li>No blockchain, wallet or fees</li>
-      </ul>
+      <div class="hero-art" aria-hidden="true">
+        <div class="rec">
+          <div class="rec-top"><span class="rec-kind">Move-in</span><span class="signed"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Signed by both</span></div>
+          <p class="rec-text">Hairline crack on the bedroom window</p>
+          <div class="rec-sign"><span class="rec-av">PS</span><span>Priya Sharma</span><span class="rec-when">1 Sep, 10:15</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+          <div class="rec-sign"><span class="rec-av">AM</span><span>Arjun Mehta</span><span class="rec-when">1 Sep, 15:15</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        </div>
+        <div class="rec-link"><span class="mono">linked to the entry above</span></div>
+        <div class="rec rec-2">
+          <div class="rec-top"><span class="rec-kind">Rent paid</span><span class="signed"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Signed by both</span></div>
+          <p class="rec-text">October rent, ₹18,000</p>
+          <p class="rec-hash mono">5d2b9e41c7a0…</p>
+        </div>
+        <p class="rec-cap">Example of how entries look</p>
+      </div>
     </div>
   </div>
 
@@ -71,22 +86,22 @@
     </div>
   </section>
 
-  <section class="band" id="simple">
+  <section class="band band-dark" id="simple">
     <div class="container">
       <h2 class="section-title">Simple to use, because there is no blockchain</h2>
-      <p class="section-lead">Many digital record systems ask you to set up a crypto wallet, pay transaction fees and wait for confirmations. Rental Evidence Vault does none of that. You sign up with a username and password, add an entry, and the other person signs it. Your browser handles the digital signing in the background, using standard, well-established signature technology.</p>
+      <p class="section-lead">Many digital record systems ask you to set up a crypto wallet, pay transaction fees and wait for confirmations. This one does none of that. You sign up with a username and password, add an entry, and the other person signs it. Your browser handles the digital signing in the background, using standard, well-established signature technology.</p>
       <div class="simple-grid">
         <div class="simple-item">
-          <h3>No wallet, no crypto</h3>
-          <p>Sign up in a minute. There is nothing to buy, install or keep track of beyond your login.</p>
+          <p class="simple-big">No wallet</p>
+          <p>Nothing to buy, install or keep track of beyond your login.</p>
         </div>
         <div class="simple-item">
-          <h3>No fees, no waiting</h3>
-          <p>Entries are saved straight away. There are no transaction fees and no confirmation delays.</p>
+          <p class="simple-big">No fees</p>
+          <p>There are no transaction fees, and entries are saved straight away.</p>
         </div>
         <div class="simple-item">
-          <h3>Private by default</h3>
-          <p>Only the two of you can see a lease and its photos. Nothing is published on a public network.</p>
+          <p class="simple-big">No public network</p>
+          <p>Only the two of you can see a lease and its photos. Nothing is published.</p>
         </div>
       </div>
     </div>
@@ -191,7 +206,15 @@
         <button type="submit" class="btn btn-primary btn-block" id="authSubmitBtn">Log in</button>
       </form>
       <div id="authMsg"></div>
-      <p class="auth-note">Rental Evidence Vault keeps a record of your tenancy that both you and your landlord sign. <a href="/" onclick="go('/', event)">Learn how it works</a></p>
+      <div class="demo-login">
+        <p><strong>Just looking around?</strong> Open a sample rental with ready-made records. No sign-up needed.</p>
+        <div class="btn-row tight">
+          <button type="button" class="btn btn-secondary" onclick="tryDemo('demo_tenant')">Explore as tenant</button>
+          <button type="button" class="btn btn-secondary" onclick="tryDemo('demo_landlord')">Explore as landlord</button>
+        </div>
+        <p class="muted small">Sample accounts are shared, so other visitors may add entries too.</p>
+      </div>
+      <p class="auth-note">Rental Evidence Vault keeps a record of your rental that both you and the other party sign. <a href="/" onclick="go('/', event)">Learn how it works</a></p>
     </div>
   </div>
 </section>
@@ -431,6 +454,10 @@ function payloadFor(leaseId, ev) {
   return { v: 1, leaseId, eventId: ev.id, type: ev.type, data: ev.data, proposedBy: ev.proposedBy, createdAt: ev.createdAt };
 }
 
+function confirmerMessageFor(leaseId, ev, prevHash) {
+  return stableStringify({ payload: payloadFor(leaseId, ev), prevHash });
+}
+
 function downloadJson(name, obj) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" }));
   const a = document.createElement("a");
@@ -653,9 +680,7 @@ window.addEventListener("popstate", render);
 function renderHeader() {
   const nav = document.getElementById("headerNav");
   if (!token) {
-    nav.innerHTML = `<a class="nav-link hide-sm" href="/#how" onclick="goSection('how', event)">How it works</a>
-      <a class="nav-link" href="/login" onclick="go('/login', event)">Log in</a>
-      <a class="btn btn-primary btn-sm" href="/login?mode=register" onclick="go('/login?mode=register', event)">Get started</a>`;
+    nav.innerHTML = `<a class="btn btn-secondary btn-sm" href="/login" onclick="go('/login', event)">Log in</a>`;
     return;
   }
   const name = displayName(username);
@@ -773,6 +798,28 @@ async function submitAuth() {
     enterApp();
   } catch (e) {
     showMsg("authMsg", e.message, false);
+  }
+}
+
+function b64url(bytes) {
+  return btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+async function tryDemo(user) {
+  try {
+    const res = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ username: user, password: "demo1234" }) });
+    const seed = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode("rev-demo-key:" + user)));
+    const spki = hexToBytes(res.publicKey);
+    const jwk = { kty: "OKP", crv: "Ed25519", d: b64url(seed), x: b64url(spki.slice(spki.length - 32)), ext: true, key_ops: ["sign"] };
+    storeKey(user, { publicKey: res.publicKey, jwk });
+    token = res.token; username = res.username; role = res.role; myPublicKey = res.publicKey;
+    localStorage.setItem("rev_pub", myPublicKey);
+    localStorage.setItem("rev_token", token);
+    localStorage.setItem("rev_username", username);
+    localStorage.setItem("rev_role", role);
+    enterApp();
+  } catch (e) {
+    showMsg("authMsg", "The sample rental is not ready yet. Wait a few seconds and try again.", false);
   }
 }
 
@@ -1125,7 +1172,10 @@ async function confirmEvent(eventId) {
       const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
       if (hash !== ev.data.photoHash) throw new Error("The photo on the server does not match the one that was signed. Do not confirm it.");
     }
-    const signature = await signMessage(message);
+    const fresh = await api(`/api/leases/${currentLeaseId}`);
+    const freshBlocks = fresh.chain.blocks;
+    const prevHash = freshBlocks.length ? freshBlocks[freshBlocks.length - 1].blockHash : "0".repeat(64);
+    const signature = await signMessage(confirmerMessageFor(currentLeaseId, ev, prevHash));
     await api(`/api/leases/${currentLeaseId}/events/${eventId}/confirm`, { method: "POST", body: JSON.stringify({ signature }) });
     showMsg("eventMsg", "Signed by both of you and added to the ledger.", true);
     refreshLeaseView();
@@ -1255,7 +1305,7 @@ async function clientVerify(detail, withPhotos) {
       return bad("the signers are not the two people on this lease.");
     }
     if (!(await verifyWith(publicKeys[b.proposedBy], message, b.proposerSignature))) return bad(`the signature of ${displayName(b.proposedBy)} does not verify.`);
-    if (!(await verifyWith(publicKeys[b.confirmedBy], message, b.confirmerSignature))) return bad(`the signature of ${displayName(b.confirmedBy)} does not verify.`);
+    if (!(await verifyWith(publicKeys[b.confirmedBy], stableStringify({ payload: JSON.parse(message), prevHash: b.prevHash }), b.confirmerSignature))) return bad(`the signature of ${displayName(b.confirmedBy)} does not verify.`);
     if (withPhotos && b.photoId) {
       const r = await fetch(`/api/leases/${lease.id}/photos/${b.photoId}`, { headers: { Authorization: "Bearer " + token } });
       const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
