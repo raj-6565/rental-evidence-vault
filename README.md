@@ -59,21 +59,9 @@ You do not need to run anything to get demo data. When the server starts it crea
 
 The sample accounts and their keys are fixed and public, because they are for exploring only. Do not use them for real records. Set `DEMO_DATA=off` to stop the server from creating them. The code is in `src/demo/demo.js`.
 
-## Checks used for the report
+## How it was checked
 
-These scripts are for developers and are not needed to use the app. Their results are in the report and the presentation.
-
-```
-npm run attacks
-npm run compare
-npm run test:api -- https://your-app.onrender.com
-```
-
-- `attacks` tries ten kinds of tampering, 50 times each, on a 12-event chain. It needs no database.
-- `compare` runs the same administrator attacks against a plain hash chain, a server-signed chain and this project.
-- `test:api` runs 16 checks against a running server: bad signatures, duplicate events, outsiders, ended leases and more.
-
-The `attacks` script covers tampering in place: nine of the ten attacks are exposed by the chain check alone, and the tenth, deleting the newest block, needs a saved receipt. The `compare` script shows how this differs from a plain or server-signed chain when the administrator holds the server's key. There, edits and forged events are exposed by the chain itself, while the other designs need the user to have kept a copy of the latest block, and cannot expose a forged addition at all. Because the second signer also signs the hash of the previous block, removing or reordering events in the middle breaks a signature in this project. Removing the newest events is caught only with a saved receipt in all three designs. These are simulated attacks under a stated threat model, not a claim of real-world security.
+The tampering experiments and the comparison with a plain and a server-signed chain are described, with their results, in the project report and presentation. They are simulated attacks under a stated threat model, not a claim of real-world security. Because the second signer also signs the hash of the previous block, removing or reordering events in the middle breaks a signature. Removing the newest events leaves a valid shorter chain, so that is caught only with a saved receipt.
 
 ## API
 
@@ -109,7 +97,6 @@ src/routes/              auth, leases, events, chain, photos
 public/index.html        the page and all front-end logic
 public/styles.css        design tokens and styles
 src/demo/                sample rental created at start-up
-tests/                   attack simulation and API checks
 ```
 
 ## Why not a blockchain?
