@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Attack lab · Rental Evidence Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Run the same attack on three record designs and see which ones notice.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23166534'/%3E%3Cpath d='M12.6 18.2l2.6 2.6 4.4-4.9' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+[hidden] { display: none !important; }
+.lab-head { padding: 40px 0 8px; }
+.lab-head h1 { font-size: 2rem; letter-spacing: -0.02em; margin-bottom: 10px; }
+.lab-head p { color: var(--muted); max-width: 720px; }
+.lab-who { margin-top: 16px; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 0.92rem; max-width: 720px; }
+.lab-controls { margin: 28px 0 8px; }
+.lab-controls h2 { font-size: 1.05rem; margin-bottom: 12px; }
+.attack-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.attack-row .btn { text-align: left; }
+.attack-row .btn.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.lab-opts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 16px; font-size: 0.92rem; }
+.lab-title { margin: 24px 0 4px; font-size: 1.15rem; }
+.lab-sub { color: var(--muted); font-size: 0.92rem; margin-bottom: 14px; }
+.lab-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.lab-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.lab-card h3 { font-size: 1rem; }
+.lab-card .desc { color: var(--muted); font-size: 0.85rem; min-height: 3.4em; }
+.strip { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0; }
+.blk { width: 34px; height: 34px; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--bg); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 0.78rem; }
+.blk.bad { border-color: var(--danger); background: var(--danger-soft); color: var(--danger); font-weight: 600; }
+.blk.forged { border-style: dashed; }
+.verdict { font-weight: 700; font-size: 1.02rem; display: flex; align-items: center; gap: 8px; }
+.verdict.ok { color: var(--accent); }
+.verdict.miss { color: var(--danger); }
+.verdict.intact { color: var(--muted); font-weight: 600; }
+.reason { font-size: 0.85rem; color: var(--muted); min-height: 2.6em; }
+.lab-card.caught { border-color: var(--accent-line); }
+.lab-card.missed { border-color: var(--danger-line); background: var(--danger-soft); }
+.matrix { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 12px; }
+.matrix th, .matrix td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: center; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; }
+.matrix th { font-weight: 600; color: var(--muted); font-size: 0.82rem; }
+.matrix .y { color: var(--accent); font-weight: 600; }
+.matrix .n { color: var(--danger); font-weight: 600; }
+.lab-note { margin-top: 28px; padding: 14px 16px; border: 1px dashed var(--border-strong); border-radius: var(--radius); color: var(--muted); font-size: 0.88rem; max-width: 820px; }
+.lab-unsupported { margin-top: 24px; }
+@media (max-width: 860px) { .lab-grid { grid-template-columns: 1fr; } .lab-card .desc { min-height: 0; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">
+      <svg class="brand-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+        <rect width="32" height="32" rx="8" class="bm-bg"/>
+        <path d="M7 15.5L16 8l9 7.5" class="bm-line"/>
+        <path d="M9.5 14v9h13v-9" class="bm-line"/>
+        <path d="M12.6 18.2l2.6 2.6 4.4-4.9" class="bm-line"/>
+      </svg>
+      <span>Rental Evidence Vault</span>
+    </a>
+    <nav class="header-nav"><a class="btn btn-secondary btn-sm" href="/">Back to the app</a></nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="lab-head">
+    <h1>Attack lab</h1>
+    <p>Three designs store the same eight rental events. Pick something a dishonest administrator might do, then see which designs notice. Everything runs in your browser, with fresh keys created when the page opened.</p>
+    <p class="lab-who"><strong>The attacker</strong> has full access to the database and holds the server's signing key. The attacker does not have the tenant's or the landlord's private key.</p>
+  </section>
+
+  <div id="unsupported" class="banner banner-bad lab-unsupported" hidden>This browser cannot create the Ed25519 keys the lab needs. Open the page in a recent Chrome, Edge, Safari or Firefox.</div>
+
+  <section class="lab-controls" id="controls" hidden>
+    <h2>What does the administrator do?</h2>
+    <div class="attack-row" id="attackRow"></div>
+    <div class="lab-opts">
+      <label class="check"><input type="checkbox" id="receipt"> The user kept a saved receipt of the latest entry</label>
+      <button class="btn btn-ghost btn-sm" id="resetBtn" type="button">Reset</button>
+    </div>
+  </section>
+
+  <section id="result" hidden>
+    <h2 class="lab-title" id="resultTitle"></h2>
+    <p class="lab-sub" id="resultSub"></p>
+    <div class="lab-grid" id="grid"></div>
+  </section>
+
+  <section id="matrixWrap" hidden>
+    <h2 class="lab-title">All attacks at a glance</h2>
+    <p class="lab-sub" id="matrixSub"></p>
+    <div style="overflow-x:auto"><table class="matrix" id="matrix"></table></div>
+    <button class="btn btn-secondary btn-sm" id="runAll" type="button" style="margin-top:14px">Run all attacks</button>
+  </section>
+
+  <p class="lab-note">This is a simulation under the same threat model as the project report. It shows what each design can and cannot detect without outside help. It is not an accuracy rate and not a claim of real-world security. Deleting the newest entries leaves a shorter chain that still looks valid in every design, so only a saved receipt catches it.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>Rental Evidence Vault · PBL-III project, Manipal University Jaipur</span>
+  </div>
+</footer>
+
+<script>
+const enc = new TextEncoder();
+const LEASE = "lease-lab";
+const ZERO = "0".repeat(64);
+const TENANT = "priya_sharma";
+const LANDLORD = "arjun_mehta";
+
+const EVENTS = [
+  { type: "MOVE_IN", by: TENANT, data: { description: "Hairline crack on the bedroom window" } },
+  { type: "PAYMENT", by: TENANT, data: { description: "Rent for August", amount: 18000 } },
+  { type: "MAINTENANCE", by: TENANT, data: { description: "Kitchen tap is leaking" } },
+  { type: "PAYMENT", by: TENANT, data: { description: "Rent for September", amount: 18000 } },
+  { type: "MAINTENANCE_UPDATE", by: LANDLORD, data: { description: "Plumber fixed the kitchen tap" } },
+  { type: "PAYMENT", by: TENANT, data: { description: "Rent for October", amount: 18000 } },
+  { type: "MAINTENANCE", by: TENANT, data: { description: "Bathroom light not working" } },
+  { type: "MOVE_OUT", by: TENANT, data: { description: "Flat returned in the same condition as move-in" } }
+];
+
+const ATTACKS = [
+  { id: "edit", label: "Change an amount, leave the hashes", title: "The administrator changes an entry and does nothing else", sub: "Rent for September is changed from 18,000 to 1,800 directly in the database." },
+  { id: "rebuild", label: "Change an amount and rebuild every hash", title: "The administrator changes an entry and rebuilds the chain", sub: "The same change, but this time every hash after it is recomputed, and server signatures are redone with the server's key." },
+  { id: "forge", label: "Add a forged entry", title: "The administrator adds an entry that nobody agreed to", sub: "A new 'Damage: wall repainted, deposit deducted' entry is appended with correct hashes and the server's signature." },
+  { id: "middle", label: "Delete an entry from the middle", title: "The administrator deletes an entry in the middle of the record", sub: "The 'kitchen tap is leaking' repair request is removed and the chain is rebuilt." },
+  { id: "reorder", label: "Reorder two entries", title: "The administrator swaps the order of two entries", sub: "Two entries trade places and the chain is rebuilt." },
+  { id: "newest", label: "Delete the newest entry", title: "The administrator deletes the newest entry", sub: "The move-out entry is removed. Nothing after it points back to it." }
+];
+
+const DESIGNS = [
+  { id: "plain", name: "Plain hash chain", desc: "Each block includes the hash of the one before it. No signatures." },
+  { id: "server", name: "Server-signed chain", desc: "Same chain, and the server signs every block with its own key. This is how most systems work." },
+  { id: "ours", name: "Rental Evidence Vault", desc: "Both people sign every entry with keys in their own browsers, and the second signer also signs the previous block's hash." }
+];
+
+let keys = null;
+let base = null;
+let current = null;
+
+function stable(v) {
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  if (Array.isArray(v)) return "[" + v.map(stable).join(",") + "]";
+  return "{" + Object.keys(v).sort().map((k) => JSON.stringify(k) + ":" + stable(v[k])).join(",") + "}";
+}
+
+function hex(buf) {
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function fromHex(h) {
+  const out = new Uint8Array(h.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(h.substr(i * 2, 2), 16);
+  return out;
+}
+
+async function sha(text) {
+  return hex(await crypto.subtle.digest("SHA-256", enc.encode(text)));
+}
+
+async function makeKey() {
+  const pair = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]);
+  return { priv: pair.privateKey, pub: pair.publicKey };
+}
+
+async function sign(key, text) {
+  return hex(await crypto.subtle.sign({ name: "Ed25519" }, key.priv, enc.encode(text)));
+}
+
+async function verify(key, text, sig) {
+  try {
+    return await crypto.subtle.verify({ name: "Ed25519" }, key.pub, fromHex(sig), enc.encode(text));
+  } catch (e) {
+    return false;
+  }
+}
+
+function clone(x) {
+  return JSON.parse(JSON.stringify(x));
+}
+
+function plainHash(b) {
+  return sha(stable({ index: b.index, data: b.data, prevHash: b.prevHash }));
+}
+
+async function relinkPlain(chain, from, resign) {
+  for (let i = from; i < chain.length; i++) {
+    const b = chain[i];
+    b.index = i;
+    b.prevHash = i ? chain[i - 1].hash : ZERO;
+    b.hash = await plainHash(b);
+    if (resign) b.serverSig = await sign(keys.server, b.hash);
+  }
+}
+
+async function buildPlain(withServer) {
+  const chain = [];
+  for (let i = 0; i < EVENTS.length; i++) {
+    const b = { index: i, data: { type: EVENTS[i].type, ...EVENTS[i].data }, prevHash: i ? chain[i - 1].hash : ZERO };
+    b.hash = await plainHash(b);
+    if (withServer) b.serverSig = await sign(keys.server, b.hash);
+    chain.push(b);
+  }
+  return chain;
+}
+
+function payloadOf(b) {
+  return { v: 1, leaseId: LEASE, eventId: b.eventId, type: b.type, data: b.data, proposedBy: b.proposedBy, createdAt: b.createdAt };
+}
+
+function oursBlockHash(b) {
+  return sha(stable({ index: b.index, finalizedAt: b.finalizedAt, confirmedBy: b.confirmedBy, proposerSignature: b.proposerSignature, confirmerSignature: b.confirmerSignature, prevHash: b.prevHash, dataHash: b.dataHash }));
+}
+
+async function buildOurs() {
+  const chain = [];
+  for (let i = 0; i < EVENTS.length; i++) {
+    const e = EVENTS[i];
+    const other = e.by === TENANT ? LANDLORD : TENANT;
+    const b = {
+      index: i, eventId: "evt-lab" + i, type: e.type, data: { ...e.data }, proposedBy: e.by, confirmedBy: other,
+      createdAt: new Date(Date.UTC(2026, 7, 1 + i * 6, 10)).toISOString(), finalizedAt: new Date(Date.UTC(2026, 7, 1 + i * 6, 15)).toISOString(),
+      prevHash: i ? chain[i - 1].blockHash : ZERO
+    };
+    const payload = payloadOf(b);
+    b.dataHash = await sha(stable(payload));
+    b.proposerSignature = await sign(keys[e.by], stable(payload));
+    b.confirmerSignature = await sign(keys[other], stable({ payload, prevHash: b.prevHash }));
+    b.blockHash = await oursBlockHash(b);
+    chain.push(b);
+  }
+  return chain;
+}
+
+async function relinkOurs(chain, from) {
+  for (let i = from; i < chain.length; i++) {
+    const b = chain[i];
+    b.index = i;
+    b.prevHash = i ? chain[i - 1].blockHash : ZERO;
+    b.blockHash = await oursBlockHash(b);
+  }
+}
+
+async function checkPlain(chain, withServer) {
+  let prev = ZERO;
+  for (const b of chain) {
+    if (b.prevHash !== prev) return { ok: false, index: b.index, reason: "Block " + b.index + " does not link to the block before it." };
+    if ((await plainHash(b)) !== b.hash) return { ok: false, index: b.index, reason: "Block " + b.index + " does not match its hash." };
+    if (withServer && !(await verify(keys.server, b.hash, b.serverSig || ""))) return { ok: false, index: b.index, reason: "Block " + b.index + ": the server's signature does not verify." };
+    prev = b.hash;
+  }
+  return { ok: true };
+}
+
+async function checkOurs(chain) {
+  let prev = ZERO;
+  for (const b of chain) {
+    const bad = (reason) => ({ ok: false, index: b.index, reason: "Block " + b.index + ": " + reason });
+    if (b.prevHash !== prev) return bad("does not link to the block before it.");
+    const payload = payloadOf(b);
+    if ((await sha(stable(payload))) !== b.dataHash) return bad("the details no longer match their hash.");
+    if ((await oursBlockHash(b)) !== b.blockHash) return bad("the stored hash does not match the block.");
+    if (!(await verify(keys[b.proposedBy], stable(payload), b.proposerSignature))) return bad("the signature of " + b.proposedBy.split("_")[0] + " does not verify.");
+    if (!(await verify(keys[b.confirmedBy], stable({ payload, prevHash: b.prevHash }), b.confirmerSignature))) return bad("the signature of " + b.confirmedBy.split("_")[0] + " does not verify.");
+    prev = b.blockHash;
+  }
+  return { ok: true };
+}
+
+function headOf(chain, design) {
+  const last = chain[chain.length - 1];
+  return { index: last.index, hash: design === "ours" ? last.blockHash : last.hash };
+}
+
+function receiptHolds(chain, design, head) {
+  const b = chain[head.index];
+  if (!b) return false;
+  return (design === "ours" ? b.blockHash : b.hash) === head.hash;
+}
+
+async function attack(id, design, chain) {
+  const c = clone(chain);
+  if (id === "edit" || id === "rebuild") {
+    c[3].data.amount = 1800;
+    if (id === "edit") return c;
+    if (design === "ours") {
+      c[3].dataHash = await sha(stable(payloadOf(c[3])));
+      await relinkOurs(c, 3);
+    } else {
+      await relinkPlain(c, 3, design === "server");
+    }
+    return c;
+  }
+  if (id === "forge") {
+    const i = c.length;
+    if (design === "ours") {
+      const b = { index: i, eventId: "evt-forged", type: "MAINTENANCE", data: { description: "Damage: wall repainted, deposit deducted" }, proposedBy: TENANT, confirmedBy: LANDLORD, createdAt: new Date(Date.UTC(2026, 9, 12, 10)).toISOString(), finalizedAt: new Date(Date.UTC(2026, 9, 12, 11)).toISOString(), prevHash: c[i - 1].blockHash, forged: true };
+      const payload = payloadOf(b);
+      b.dataHash = await sha(stable(payload));
+      b.proposerSignature = await sign(keys.server, stable(payload));
+      b.confirmerSignature = await sign(keys.server, stable({ payload, prevHash: b.prevHash }));
+      b.blockHash = await oursBlockHash(b);
+      c.push(b);
+    } else {
+      const b = { index: i, data: { type: "MAINTENANCE", description: "Damage: wall repainted, deposit deducted" }, prevHash: c[i - 1].hash, forged: true };
+      b.hash = await plainHash(b);
+      if (design === "server") b.serverSig = await sign(keys.server, b.hash);
+      c.push(b);
+    }
+    return c;
+  }
+  if (id === "middle") {
+    c.splice(2, 1);
+    if (design === "ours") await relinkOurs(c, 2);
+    else await relinkPlain(c, 2, design === "server");
+    return c;
+  }
+  if (id === "reorder") {
+    [c[3], c[4]] = [c[4], c[3]];
+    if (design === "ours") await relinkOurs(c, 3);
+    else await relinkPlain(c, 3, design === "server");
+    return c;
+  }
+  c.pop();
+  return c;
+}
+
+async function runCase(id, withReceipt) {
+  const out = {};
+  for (const d of DESIGNS) {
+    const intact = base[d.id];
+    const head = headOf(intact, d.id);
+    const after = await attack(id, d.id, intact);
+    const res = d.id === "ours" ? await checkOurs(after) : await checkPlain(after, d.id === "server");
+    let verdict = "missed";
+    let reason = "Every check passes. The record looks untouched.";
+    if (!res.ok) {
+      verdict = "chain";
+      reason = res.reason;
+    } else if (withReceipt && !receiptHolds(after, d.id, head)) {
+      verdict = "receipt";
+      reason = "The chain looks valid, but it no longer contains the latest entry the user saved.";
+    }
+    out[d.id] = { chain: after, verdict, reason, badIndex: res.ok ? -1 : res.index };
+  }
+  return out;
+}
+
+function verdictText(v) {
+  if (v === "chain") return "Caught by the chain itself";
+  if (v === "receipt") return "Caught only because of the saved receipt";
+  return "Missed";
+}
+
+function renderStrip(chain, badIndex) {
+  return chain.map((b) => `<span class="blk${b.index === badIndex ? " bad" : ""}${b.forged ? " forged" : ""}" title="Block ${b.index}">${b.index}</span>`).join("");
+}
+
+function renderCards(result) {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = DESIGNS.map((d) => {
+    const r = result[d.id];
+    const missed = r.verdict === "missed";
+    return `<div class="lab-card ${missed ? "missed" : "caught"}">
+      <h3>${d.name}</h3>
+      <p class="desc">${d.desc}</p>
+      <div class="strip">${renderStrip(r.chain, r.badIndex)}</div>
+      <p class="verdict ${missed ? "miss" : "ok"}">${verdictText(r.verdict)}</p>
+      <p class="reason">${r.reason}</p>
+    </div>`;
+  }).join("");
+}
+
+function renderIntact() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = DESIGNS.map((d) => `<div class="lab-card">
+      <h3>${d.name}</h3>
+      <p class="desc">${d.desc}</p>
+      <div class="strip">${renderStrip(base[d.id])}</div>
+      <p class="verdict intact">Intact: all checks pass</p>
+      <p class="reason">Choose an attack above.</p>
+    </div>`).join("");
+  document.getElementById("resultTitle").textContent = "Before any attack";
+  document.getElementById("resultSub").textContent = "All three records start out valid.";
+  document.getElementById("result").hidden = false;
+}
+
+async function show(id) {
+  current = id;
+  const withReceipt = document.getElementById("receipt").checked;
+  document.querySelectorAll("#attackRow .btn").forEach((b) => b.classList.toggle("active", b.dataset.id === id));
+  const a = ATTACKS.find((x) => x.id === id);
+  document.getElementById("resultTitle").textContent = a.title;
+  document.getElementById("resultSub").textContent = a.sub;
+  renderCards(await runCase(id, withReceipt));
+  document.getElementById("result").hidden = false;
+  document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function renderMatrix() {
+  const withReceipt = document.getElementById("receipt").checked;
+  document.getElementById("matrixSub").textContent = withReceipt
+    ? "With a saved receipt of the latest entry. A cell says whether the attack was noticed."
+    : "Without a saved receipt: what each design can notice on its own. A cell says whether the attack was noticed.";
+  const rows = [];
+  for (const a of ATTACKS) {
+    const res = await runCase(a.id, withReceipt);
+    const cell = (d) => {
+      const v = res[d].verdict;
+      return v === "missed" ? '<td class="n">Missed</td>' : v === "chain" ? '<td class="y">Caught</td>' : '<td class="y">Caught (receipt)</td>';
+    };
+    rows.push(`<tr><td>${a.label}</td>${cell("plain")}${cell("server")}${cell("ours")}</tr>`);
+  }
+  document.getElementById("matrix").innerHTML = `<tr><th>Attack</th>${DESIGNS.map((d) => `<th>${d.name}</th>`).join("")}</tr>` + rows.join("");
+  document.getElementById("matrixWrap").hidden = false;
+}
+
+async function init() {
+  if (!window.crypto || !crypto.subtle) { document.getElementById("unsupported").hidden = false; return; }
+  try {
+    keys = { [TENANT]: await makeKey(), [LANDLORD]: await makeKey(), server: await makeKey() };
+    base = { plain: await buildPlain(false), server: await buildPlain(true), ours: await buildOurs() };
+  } catch (e) {
+    document.getElementById("unsupported").hidden = false;
+    return;
+  }
+  document.getElementById("attackRow").innerHTML = ATTACKS.map((a) => `<button class="btn btn-secondary btn-sm" type="button" data-id="${a.id}">${a.label}</button>`).join("");
+  document.querySelectorAll("#attackRow .btn").forEach((b) => b.addEventListener("click", () => show(b.dataset.id)));
+  document.getElementById("receipt").addEventListener("change", () => { renderMatrix(); if (current) show(current); });
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    current = null;
+    document.querySelectorAll("#attackRow .btn").forEach((b) => b.classList.remove("active"));
+    renderIntact();
+  });
+  document.getElementById("runAll").addEventListener("click", renderMatrix);
+  document.getElementById("controls").hidden = false;
+  renderIntact();
+  renderMatrix();
+}
+
+init();
+</script>
+</body>
+</html>
