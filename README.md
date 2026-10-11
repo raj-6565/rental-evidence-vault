@@ -9,7 +9,7 @@ Built for PBL-III at Manipal University Jaipur.
 1. You register. Your browser creates an Ed25519 key pair. The public key goes to the server and the private key stays in your browser.
 2. You log an event, for example "scratch on the living room wall", and attach a photo if you like. Your browser signs it.
 3. The other person opens the pending event. Their browser checks your signature and the photo, and only then do they sign the same event.
-4. The server adds the event to the lease's chain as a block. Each block stores both signatures and the hash of the block before it.
+4. The server adds the event to the lease's chain as a block. The second person signs the event together with the hash of the block before it, so the signature also fixes the event's place in the record. Each block stores both signatures and the hash of the block before it.
 
 If anyone edits an old block, its hash stops matching. If they recompute the hashes to hide it, the signatures stop matching, because only the two users can sign. Your browser re-checks all of this every time you open a lease, without trusting the server.
 
@@ -26,7 +26,7 @@ If anyone edits an old block, its hash stops matching. If they recompute the has
 
 ## Limits you should know about
 
-- An administrator who deletes or reorders whole events and rebuilds the hashes leaves a chain that still looks valid, because each signature covers its own event, not its position. Deleting the newest block does the same. A saved receipt or the browser's remembered latest block catches all of these, so download a receipt now and then.
+- An administrator who deletes the newest events leaves a shorter chain that still looks valid, because nothing after it points back. A saved receipt or the browser's remembered latest block catches this, so download a receipt now and then.
 - Lose your key and that account can't sign anymore. Use "Back up key" and keep the file safe.
 - The server hands out public keys, so the two people should compare the fingerprints once, on a call or in person.
 - Sessions live in server memory, so a restart logs everyone out.
@@ -53,23 +53,27 @@ Open http://localhost:3000. The tables are created on first use. Use a recent Ch
 3. Add the environment variable `DATABASE_URL` with your Neon connection string (just the URL, no `psql` and no quotes).
 4. When the deploy finishes, open `/api/health`. You should see `{"status":"ok","database":"connected"}`.
 
-## Demo data and tests
+## Demo data
+
+You do not need to run anything to get demo data. When the server starts it creates two sample accounts, `demo_tenant` and `demo_landlord`, and a sample lease with signed entries and one entry waiting for the tenant to confirm. On the login page, "Explore as tenant" and "Explore as landlord" open that lease directly, with the signing key already in place, so you can confirm an entry, verify the record or try the tamper simulator.
+
+The sample accounts and their keys are fixed and public, because they are for exploring only. Do not use them for real records. Set `DEMO_DATA=off` to stop the server from creating them. The code is in `src/demo/demo.js`.
+
+## Checks used for the report
+
+These scripts are for developers and are not needed to use the app. Their results are in the report and the presentation.
 
 ```
-npm run seed -- https://your-app.onrender.com
 npm run attacks
 npm run compare
 npm run test:api -- https://your-app.onrender.com
-npm run demo
 ```
 
-- `seed` creates `demo_tenant` and `demo_landlord` (password `demo1234`) with a demo lease and three signed events. Key files are written to `seed-keys/`; import the matching one after logging in.
-- `attacks` tries ten kinds of tampering, 50 times each, on a 12-event chain and prints how many were caught, with timings. It needs no database.
-- `compare` runs the same administrator attacks against a plain hash chain, a server-signed chain (the usual design) and this project, and prints how many each one catches.
+- `attacks` tries ten kinds of tampering, 50 times each, on a 12-event chain. It needs no database.
+- `compare` runs the same administrator attacks against a plain hash chain, a server-signed chain and this project.
 - `test:api` runs 16 checks against a running server: bad signatures, duplicate events, outsiders, ended leases and more.
-- `demo` is a short console walkthrough of the chain.
 
-In my runs, the 10 in-place attacks in `attacks` were caught 450 of 500 times by the chain check alone, and 500 of 500 with a saved receipt. In `compare`, an administrator who has the server's signing key can edit or forge events in a plain or server-signed chain without being caught (0 of 100 caught by the chain check), while here edits and forged events are caught every time (100 of 100). Removing or reordering whole events is the one thing the chain check alone misses; a saved receipt catches it.
+The `attacks` script covers tampering in place: nine of the ten attacks are exposed by the chain check alone, and the tenth, deleting the newest block, needs a saved receipt. The `compare` script shows how this differs from a plain or server-signed chain when the administrator holds the server's key. There, edits and forged events are exposed by the chain itself, while the other designs need the user to have kept a copy of the latest block, and cannot expose a forged addition at all. Because the second signer also signs the hash of the previous block, removing or reordering events in the middle breaks a signature in this project. Removing the newest events is caught only with a saved receipt in all three designs. These are simulated attacks under a stated threat model, not a claim of real-world security.
 
 ## API
 
@@ -102,9 +106,14 @@ src/utils/crypto.js      hashing, canonical JSON, Ed25519 checks
 src/utils/access.js      who can see which lease
 src/utils/rent.js        rent status
 src/routes/              auth, leases, events, chain, photos
-public/index.html        the whole front end
-scripts/seed.js          demo data
+public/index.html        the page and all front-end logic
+public/styles.css        design tokens and styles
+src/demo/                sample rental created at start-up
 tests/                   attack simulation and API checks
 ```
+
+## Why not a blockchain?
+
+A blockchain helps many strangers agree on one order of records. A tenancy has two known people, and every record already needs both of their signatures, so that agreement is built in. Leaving out the chain means no wallet, no transaction fees, no waiting for confirmations, data that stays in a private database, and an app that looks like any other rental app. The trade-off is that the record depends on one server for availability and has no built-in public timestamp. Receipts and the export cover the first, and anchoring the chain head with OpenTimestamps could add the second later.
 
 Made with Node.js, Express, PostgreSQL (Neon), multer and plain JavaScript, and hosted on Render.
