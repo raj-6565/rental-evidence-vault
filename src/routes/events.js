@@ -2,7 +2,7 @@ const express = require("express");
 const crypto = require("crypto");
 const multer = require("multer");
 const { readCollection, writeCollection, savePhoto } = require("../db/store");
-const { RentalEvidenceChain, eventPayload } = require("../chain/hashChain");
+const { RentalEvidenceChain, eventPayload, confirmerMessage } = require("../chain/hashChain");
 const { hashFile, stableStringify, verifySignature } = require("../utils/crypto");
 const { requireAuth } = require("./auth");
 const { asyncHandler } = require("../utils/asyncHandler");
@@ -119,13 +119,12 @@ router.post("/:eventId/confirm", requireAuth, asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "the other party has to confirm this event" });
   }
 
-  const message = stableStringify(eventPayload(lease.id, event));
-  if (!verifySignature(req.user.publicKey, message, req.body.signature)) {
-    return res.status(400).json({ error: "signature does not verify against your registered key" });
-  }
-
   const chains = await readCollection("chains");
   const chain = RentalEvidenceChain.fromJSON(chains[lease.id] || { leaseId: lease.id, blocks: [] });
+  const message = confirmerMessage(lease.id, event, chain.headHash());
+  if (!verifySignature(req.user.publicKey, message, req.body.signature)) {
+    return res.status(400).json({ error: "signature does not verify against your registered key, or another entry was added while you were signing. Refresh and try again." });
+  }
   const block = chain.addSignedEvent({
     event,
     confirmedBy: req.user.username,
