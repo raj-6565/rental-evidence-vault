@@ -1,6 +1,4 @@
 const crypto = require("crypto");
-const fs = require("fs");
-const path = require("path");
 const { stableStringify } = require("../utils/crypto");
 
 const PASSWORD = "demo1234";
@@ -14,10 +12,6 @@ function keyFor(username) {
   const privateKey = crypto.createPrivateKey({ key: Buffer.concat([PKCS8_PREFIX, seedFor(username)]), format: "der", type: "pkcs8" });
   const publicHex = crypto.createPublicKey(privateKey).export({ type: "spki", format: "der" }).toString("hex");
   return { privateKey, publicHex };
-}
-
-function photo(name) {
-  return fs.readFileSync(path.join(__dirname, name));
 }
 
 async function call(base, method, url, token, body) {
@@ -89,9 +83,9 @@ async function ensureDemoData(base) {
     startDate: "2026-08-01",
     demo: true,
   });
-  await record(base, lease.id, tenant, landlord, "MOVE_IN", { description: "Hairline crack on the bedroom window, walls otherwise clean" }, photo("wall.jpg"));
+  await record(base, lease.id, tenant, landlord, "MOVE_IN", { description: "Hairline crack on the bedroom window, walls otherwise clean" }, null);
   await record(base, lease.id, tenant, landlord, "PAYMENT", { description: "Rent for this month", amount: 18000 }, null);
-  await record(base, lease.id, tenant, landlord, "MAINTENANCE", { description: "Kitchen tap is leaking" }, photo("tap.jpg"));
+  await record(base, lease.id, tenant, landlord, "MAINTENANCE", { description: "Kitchen tap is leaking" }, null);
   await record(base, lease.id, landlord, null, "MAINTENANCE_UPDATE", { description: "Plumber fixed the kitchen tap" }, null);
   return true;
 }
