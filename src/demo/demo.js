@@ -1,5 +1,35 @@
 const crypto = require("crypto");
 const { stableStringify } = require("../utils/crypto");
+const { readCollection, writeCollection } = require("../db/store");
+const { RentalEvidenceChain } = require("../chain/hashChain");
+
+const SAMPLE_ADDRESS = "221B, Sector 14, Jaipur";
+
+function isSample(lease) {
+  return lease.address === SAMPLE_ADDRESS && lease.landlordUsername === "demo_landlord" && lease.tenantUsername === "demo_tenant";
+}
+
+async function repairSample() {
+  const leases = await readCollection("leases");
+  const chains = await readCollection("chains");
+  const users = await readCollection("users");
+  const broken = Object.values(leases).filter((l) => {
+    if (!isSample(l) || !chains[l.id]) return false;
+    const publicKeys = { [l.tenantUsername]: users[l.tenantUsername] && users[l.tenantUsername].publicKey, [l.landlordUsername]: users[l.landlordUsername] && users[l.landlordUsername].publicKey };
+    return !RentalEvidenceChain.fromJSON(chains[l.id]).verifyChain({ parties: [l.tenantUsername, l.landlordUsername], publicKeys }).valid;
+  });
+  if (broken.length === 0) return;
+  const pending = await readCollection("pendingEvents");
+  for (const l of broken) {
+    delete leases[l.id];
+    delete chains[l.id];
+    delete pending[l.id];
+  }
+  await writeCollection("leases", leases);
+  await writeCollection("chains", chains);
+  await writeCollection("pendingEvents", pending);
+  console.log("Repaired a tampered sample lease.");
+}
 
 const PASSWORD = "demo1234";
 const PKCS8_PREFIX = Buffer.from("302e020100300506032b657004220420", "hex");
@@ -72,16 +102,16 @@ async function record(base, leaseId, proposer, confirmer, type, data, image) {
 }
 
 async function ensureDemoData(base) {
+  await repairSample();
   const tenant = await loginOrRegister(base, "demo_tenant", "tenant");
   const landlord = await loginOrRegister(base, "demo_landlord", "landlord");
   const leases = await call(base, "GET", "/api/leases", landlord.token);
-  if ((Array.isArray(leases) ? leases : leases.leases || []).some((l) => l.demo)) return false;
+  if ((Array.isArray(leases) ? leases : leases.leases || []).some(isSample)) return false;
   const lease = await call(base, "POST", "/api/leases", landlord.token, {
-    address: "221B, Sector 14, Jaipur",
+    address: SAMPLE_ADDRESS,
     tenantUsername: tenant.username,
     rentAmount: 18000,
     startDate: "2026-08-01",
-    demo: true,
   });
   await record(base, lease.id, tenant, landlord, "MOVE_IN", { description: "Hairline crack on the bedroom window, walls otherwise clean" }, null);
   await record(base, lease.id, tenant, landlord, "PAYMENT", { description: "Rent for this month", amount: 18000 }, null);
@@ -103,4 +133,4 @@ async function startDemoData(base) {
   }
 }
 
-module.exports = { startDemoData };
+module.exports = { startDemoData, isSample };
