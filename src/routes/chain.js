@@ -4,6 +4,7 @@ const { RentalEvidenceChain } = require("../chain/hashChain");
 const { requireAuth } = require("./auth");
 const { getLeaseForParty, getPartyKeys } = require("../utils/access");
 const { asyncHandler } = require("../utils/asyncHandler");
+const { isSample } = require("../demo/demo");
 
 const router = express.Router({ mergeParams: true });
 
@@ -28,6 +29,9 @@ router.post("/demo-tamper", requireAuth, asyncHandler(async (req, res) => {
   if (!result) return;
   const { lease, chain } = result;
 
+  if (isSample(lease)) {
+    return res.status(403).json({ error: "the shared sample lease cannot be tampered with. Create your own lease with the demo option ticked to try the simulator." });
+  }
   if (!lease.demo) {
     return res.status(403).json({ error: "tampering can only be simulated on a lease created as a demo lease" });
   }
