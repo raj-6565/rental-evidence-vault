@@ -41,7 +41,7 @@
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
+@media not all {
   :root {
     --bg: #0e1322;
     --surface: #151b2e;
@@ -303,7 +303,7 @@ a:hover { color: var(--accent-hover); }
 
 #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--danger-hover); color: #fff; padding: 11px 18px; border-radius: var(--radius); font-size: 0.9rem; box-shadow: var(--shadow-lg); z-index: 60; display: none; max-width: 92vw; }
 #toast.good { background: var(--ok); color: #fff; }
-@media (prefers-color-scheme: dark) { #toast.good { color: #07130d; } }
+@media not all { #toast.good { color: #07130d; } }
 
 @media (max-width: 720px) {
   h1 { font-size: 1.5rem; }
