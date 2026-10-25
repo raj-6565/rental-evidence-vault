@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rental Evidence Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A shared rental record that both tenant and landlord sign, so move-in condition, rent and repairs can't be disputed later.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Cpath d='M7 15.5L16 8l9 7.5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M9.5 14v9h13v-9' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12.6 18.2l2.6 2.6 4.4-4.9' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" onclick="go('/', event)">
+      <svg class="brand-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+        <rect width="32" height="32" rx="8" class="bm-bg"/>
+        <path d="M7 15.5L16 8l9 7.5" class="bm-line"/>
+        <path d="M9.5 14v9h13v-9" class="bm-line"/>
+        <path d="M12.6 18.2l2.6 2.6 4.4-4.9" class="bm-line"/>
+      </svg>
+      <span>Rental Evidence Vault</span>
+    </a>
+    <nav class="header-nav" id="headerNav"></nav>
+  </div>
+</header>
+
+<main>
+
+<section id="landingView" class="hidden">
+  <div class="hero">
+    <div class="container hero-inner hero-split">
+      <div class="hero-copy">
+        <h1>A shared rental record that neither side can <mark>quietly change</mark>.</h1>
+        <p class="lead">Keep move-in condition, rent payments and repairs in one place. Every entry needs the signature of both tenant and landlord, so any later change can be detected.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="/login?mode=register" onclick="go('/login?mode=register', event)">Get started</a>
+        </div>
+        <ul class="hero-points">
+          <li>Signed by both parties</li>
+          <li>Checked in your own browser</li>
+          <li>No blockchain, wallet or fees</li>
+        </ul>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="rec">
+          <div class="rec-top"><span class="rec-kind">Move-in</span><span class="signed"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Signed by both</span></div>
+          <p class="rec-text">Hairline crack on the bedroom window</p>
+          <div class="rec-sign"><span class="rec-av">PS</span><span>Priya Sharma</span><span class="rec-when">1 Sep, 10:15</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+          <div class="rec-sign"><span class="rec-av">AM</span><span>Arjun Mehta</span><span class="rec-when">1 Sep, 15:15</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        </div>
+        <div class="rec-link"><span class="mono">linked to the entry above</span></div>
+        <div class="rec rec-2">
+          <div class="rec-top"><span class="rec-kind">Rent paid</span><span class="signed"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Signed by both</span></div>
+          <p class="rec-text">October rent, ₹18,000</p>
+          <p class="rec-hash mono">5d2b9e41c7a0…</p>
+        </div>
+        <p class="rec-cap">Example of how entries look</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="band" id="how">
+    <div class="container">
+      <h2 class="section-title">How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step-no">1</span>
+          <h3>Record</h3>
+          <p>Add photos and notes: the condition of each room at move-in, a rent payment, a repair request.</p>
+        </div>
+        <div class="step">
+          <span class="step-no">2</span>
+          <h3>Both confirm</h3>
+          <p>The other person looks at it and signs. Until both of you have signed, nothing is locked in.</p>
+        </div>
+        <div class="step">
+          <span class="step-no">3</span>
+          <h3>Locked and exportable</h3>
+          <p>Verify the record whenever you like, and export a dispute packet if you ever need one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-dark" id="simple">
+    <div class="container">
+      <h2 class="section-title">Simple to use, because there is no blockchain</h2>
+      <p class="section-lead">Many digital record systems ask you to set up a crypto wallet, pay transaction fees and wait for confirmations. This one does none of that. You sign up with a username and password, add an entry, and the other person signs it. Your browser handles the digital signing in the background, using standard, well-established signature technology.</p>
+      <div class="simple-grid">
+        <div class="simple-item">
+          <p class="simple-big">No wallet</p>
+          <p>Nothing to buy, install or keep track of beyond your login.</p>
+        </div>
+        <div class="simple-item">
+          <p class="simple-big">No fees</p>
+          <p>There are no transaction fees, and entries are saved straight away.</p>
+        </div>
+        <div class="simple-item">
+          <p class="simple-big">No public network</p>
+          <p>Only the two of you can see a lease and its photos. Nothing is published.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-alt">
+    <div class="container">
+      <h2 class="section-title">Who it's for</h2>
+      <div class="audience">
+        <div class="audience-item">
+          <h3>Tenants</h3>
+          <p>Protect your deposit. Show exactly how the flat looked the day you moved in and the day you left.</p>
+        </div>
+        <div class="audience-item">
+          <h3>Landlords</h3>
+          <p>Prove the condition of the property and that rent was paid, without chasing screenshots.</p>
+        </div>
+        <div class="audience-item">
+          <h3>Mediators and courts</h3>
+          <p>Check the record yourself from the exported packet. You don't have to trust this app to do it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="security">
+    <div class="container">
+      <h2 class="section-title">Security, in plain language</h2>
+      <div class="security-list">
+        <div class="security-item">
+          <span class="security-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+          <div>
+            <h3>Your key stays on your device</h3>
+            <p>When you sign up, your browser creates a private key and keeps it. We only receive the matching public key, which can check a signature but can't make one.</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <div>
+            <h3>The server can't forge your signature</h3>
+            <p>Without your private key, nobody, including whoever runs this site, can sign for you or add an entry that looks like you agreed to it.</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <div>
+            <h3>Anyone can verify the ledger</h3>
+            <p>Your browser re-checks every signature and photo on its own. The exported packet explains how to do the same check outside the app.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-alt" id="faq">
+    <div class="container container-narrow">
+      <h2 class="section-title">Questions</h2>
+      <details class="faq">
+        <summary>Is this legally valid?</summary>
+        <p>We can't promise how a court or rent authority will treat it, and this project makes no legal claim. What it does give you is a record that both of you signed and that anyone can check for changes. How much weight that carries is for the court to decide.</p>
+      </details>
+      <details class="faq">
+        <summary>What if my landlord won't confirm?</summary>
+        <p>Nothing is locked until both of you sign. An event that hasn't been confirmed stays visible to you as waiting, and it is not part of the signed record.</p>
+      </details>
+      <details class="faq">
+        <summary>What if I lose my device?</summary>
+        <p>Use "Back up key" in your account menu and keep the file somewhere safe. On a new device, restore that file to keep signing. Without a backup you can still read and verify the record, but you can't sign new entries with that account.</p>
+      </details>
+      <details class="faq">
+        <summary>Can events be edited?</summary>
+        <p>No. After both of you sign, an event can't be changed; any edit breaks the record and shows up when it is verified. To correct something, add a new event.</p>
+      </details>
+    </div>
+  </section>
+</section>
+
+<section id="loginView" class="hidden">
+  <div class="container auth-wrap">
+    <div class="card auth-card">
+      <div class="segmented" role="tablist" aria-label="Log in or create an account">
+        <button class="seg active" id="tabLogin" role="tab" aria-selected="true" onclick="setAuthMode('login')">Log in</button>
+        <button class="seg" id="tabRegister" role="tab" aria-selected="false" onclick="setAuthMode('register')">Create account</button>
+      </div>
+      <h1 class="auth-title" id="authTitle">Welcome back</h1>
+      <form onsubmit="submitAuth(); return false;" novalidate>
+        <div class="field">
+          <label for="authUsername">Username</label>
+          <input id="authUsername" autocomplete="username" placeholder="priya_tenant">
+        </div>
+        <div class="field">
+          <label for="authPassword">Password</label>
+          <input id="authPassword" type="password" autocomplete="current-password">
+        </div>
+        <div class="field hidden" id="roleField">
+          <label>I am a</label>
+          <div class="segmented" id="roleSeg">
+            <button type="button" class="seg active" id="roleTenant" onclick="setRole('tenant')">Tenant</button>
+            <button type="button" class="seg" id="roleLandlord" onclick="setRole('landlord')">Landlord</button>
+            <button type="button" class="seg" id="roleSociety" onclick="setRole('society')">Society office</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="authSubmitBtn">Log in</button>
+      </form>
+      <div id="authMsg"></div>
+      <div class="demo-login">
+        <p><strong>Just looking around?</strong> Open a sample rental with ready-made records. No sign-up needed.</p>
+        <div class="btn-row tight">
+          <button type="button" class="btn btn-secondary" onclick="tryDemo('demo_tenant')">Explore as tenant</button>
+          <button type="button" class="btn btn-secondary" onclick="tryDemo('demo_landlord')">Explore as landlord</button>
+          <button type="button" class="btn btn-secondary" onclick="tryDemo('demo_society')">Explore as society office</button>
+        </div>
+        <p class="muted small">Sample accounts are shared, so other visitors may add entries too.</p>
+      </div>
+      <p class="auth-note">Rental Evidence Vault keeps a record of your rental that both you and the other party sign. <a href="/" onclick="go('/', event)">Learn how it works</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="appView" class="hidden">
+  <div class="container">
+
+    <div id="keyPrompt" class="banner banner-warn hidden" role="alert">
+      <div class="banner-body">
+        <strong>To sign on this device, restore your key backup.</strong>
+        <span>This browser doesn't hold your device key yet. You can read the record, but you can't sign until you restore it.</span>
+      </div>
+      <button class="btn btn-secondary" onclick="document.getElementById('restoreInput').click()">Restore key</button>
+      <input id="restoreInput" type="file" accept="application/json" hidden onchange="importKeyFile(this)">
+    </div>
+
+    <div id="societyView" class="hidden">
+      <div class="page-head">
+        <div>
+          <h1>Maintenance requests</h1>
+          <p class="muted">Requests that landlords have sent to your society office. You see the property and the request, not the lease or the tenant.</p>
+        </div>
+      </div>
+      <div id="societyMsg"></div>
+      <div id="societyList"></div>
+    </div>
+
+    <div id="dashView" class="hidden">
+      <div class="page-head">
+        <div>
+          <h1>Your leases</h1>
+          <p class="muted">Each lease has its own signed record.</p>
+        </div>
+        <button class="btn btn-primary hidden" id="addLeaseBtn" onclick="toggleLeaseForm(true)">Add a lease</button>
+      </div>
+
+      <div class="card form-card hidden" id="leaseFormWrap">
+        <h2>New lease</h2>
+        <div class="form-grid">
+          <div class="field"><label for="leaseAddress">Property address</label><input id="leaseAddress" placeholder="221B, Sector 14, Jaipur"></div>
+          <div class="field"><label for="leaseTenant">Tenant's username</label><input id="leaseTenant" placeholder="priya_tenant"></div>
+          <div class="field"><label for="leaseRent">Monthly rent (₹, optional)</label><input id="leaseRent" type="number" placeholder="18000"></div>
+          <div class="field"><label for="leaseStartDate">Start date (optional)</label><input id="leaseStartDate" type="date"></div>
+        </div>
+        <div class="field"><label for="leaseSociety">Society office username (optional)</label><input id="leaseSociety" placeholder="sunrise_society"></div>
+        <label class="check"><input id="leaseAgreement" type="checkbox" checked> Record verification and the signed agreement before move-in</label>
+        <label class="check"><input id="leaseDemo" type="checkbox"> Demo lease (turns on the tamper simulator)</label>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="createLease()">Save lease</button>
+          <button class="btn btn-ghost" onclick="toggleLeaseForm(false)">Cancel</button>
+        </div>
+        <div id="leaseMsg"></div>
+      </div>
+
+      <div id="leaseGrid" class="lease-list"></div>
+    </div>
+
+    <div id="leaseView" class="hidden">
+      <a class="back" href="/app" onclick="go('/app', event)">&larr; Your leases</a>
+
+      <div class="lease-head">
+        <div class="lease-title">
+          <h1 id="lv_address"></h1>
+          <p class="muted" id="lv_meta"></p>
+          <button class="conn-badge" id="lv_conn" onclick="openConnectionModal()"></button>
+        </div>
+        <div class="menu-wrap hidden" id="lv_menuwrap">
+          <button class="icon-btn" aria-label="Lease options" aria-haspopup="true" onclick="toggleMenu('leaseMenu', event)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+          </button>
+          <div class="menu hidden" id="leaseMenu">
+            <button class="menu-item danger-text" onclick="confirmEndLease()">End lease</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bar" id="lv_stats"></div>
+      <div id="lv_verify" class="verify-line"></div>
+      <div id="lv_phase" class="phase-box hidden"></div>
+
+      <div class="card onboard hidden" id="lv_onboard">
+        <h2>Start your evidence record</h2>
+        <p>Most deposit disputes are about move-in condition. Add photos of each room now — once your landlord confirms, both signatures lock them in.</p>
+        <button class="btn btn-primary" onclick="startMoveIn()">Add move-in photos</button>
+      </div>
+
+      <div class="card form-card compose" id="lv_logsection">
+        <h2>Log a new event</h2>
+        <div class="field">
+          <label id="chipLabel">What happened?</label>
+          <div class="chips" id="chipRow" role="radiogroup" aria-labelledby="chipLabel"></div>
+        </div>
+        <div class="form-grid hidden" id="agreementFields">
+          <div class="field"><label for="agrRent">Monthly rent (₹)</label><input id="agrRent" type="number" inputmode="numeric" placeholder="18000"></div>
+          <div class="field"><label for="agrTerm">Term (months)</label><input id="agrTerm" type="number" inputmode="numeric" value="11"></div>
+          <div class="field"><label for="agrDeposit">Security deposit (₹, optional)</label><input id="agrDeposit" type="number" inputmode="numeric" placeholder="36000"></div>
+          <div class="field"><label for="agrNotice">Notice period (days)</label><input id="agrNotice" type="number" inputmode="numeric" value="30"></div>
+        </div>
+        <div class="form-grid hidden" id="rentFields">
+          <div class="field"><label for="eventAmount" id="amountLabel">Amount paid (₹)</label><input id="eventAmount" type="number" inputmode="numeric" placeholder="18000"></div>
+          <div class="field" id="dateField"><label for="eventDate">Paid on</label><input id="eventDate" type="date"></div>
+        </div>
+        <div class="field">
+          <label for="eventDesc">Details</label>
+          <textarea id="eventDesc" rows="3" placeholder="e.g. Hairline crack on the bedroom window, walls freshly painted, geyser works"></textarea>
+        </div>
+        <div class="field" id="photoField">
+          <label id="photoLabel">Photos</label>
+          <div class="dropzone" id="photoDrop" tabindex="0" role="button" aria-label="Add photos">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+            <span>Drop files here or <u>browse</u></span>
+            <small id="photoHint">Up to 6 photos, 5 MB each</small>
+            <input id="eventPhoto" type="file" accept="image/*" multiple hidden>
+          </div>
+          <div class="thumbs" id="photoThumbs"></div>
+        </div>
+        <button class="btn btn-primary" id="sendBtn" onclick="proposeEvent()">Send to confirm</button>
+        <p class="helper">Once both of you sign, this can't be edited.</p>
+        <div id="eventMsg"></div>
+      </div>
+
+      <div class="card form-card hidden" id="lv_society">
+        <h2>Society office</h2>
+        <p class="muted" id="socIntro"></p>
+        <div class="soc-pick hidden" id="socPick">
+          <input id="socUser" placeholder="society office username" aria-label="Society office username">
+          <button class="btn btn-secondary" onclick="saveSociety()">Save</button>
+        </div>
+        <div class="hidden" id="socNew">
+          <div class="form-grid">
+            <div class="field"><label for="reqCategory">Type of work</label><select id="reqCategory"></select></div>
+            <div class="field"><label for="reqUrgency">How urgent</label><select id="reqUrgency"><option>Normal</option><option>Urgent</option></select></div>
+          </div>
+          <div class="field"><label for="reqDesc">What needs to be done</label><textarea id="reqDesc" rows="2" placeholder="e.g. The kitchen tap is leaking, please send the society plumber"></textarea></div>
+          <button class="btn btn-primary" id="reqSendBtn" onclick="sendRequest()">Send request to society</button>
+        </div>
+        <div id="socMsg"></div>
+        <div id="socList"></div>
+      </div>
+
+      <div id="waitYou" class="hidden">
+        <h2 class="block-title">Waiting on you</h2>
+        <div id="pendingYou"></div>
+      </div>
+      <div id="waitThem" class="hidden">
+        <h2 class="block-title">Waiting on <span id="waitThemName">them</span></h2>
+        <div id="pendingThem"></div>
+      </div>
+
+      <div id="ledgerWrap" class="hidden">
+        <div class="ledger-head">
+          <h2 class="block-title">Evidence ledger</h2>
+          <div class="btn-row tight">
+            <div class="menu-wrap">
+              <button class="btn btn-secondary" aria-haspopup="true" onclick="toggleMenu('verifyMenu', event)">Verify
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <div class="menu menu-right hidden" id="verifyMenu">
+                <button class="menu-item" onclick="closeMenus(); verifyInBrowser()">Verify in my browser</button>
+                <button class="menu-item" onclick="closeMenus(); verifyChain()">Ask the server to verify</button>
+                <button class="menu-item" onclick="closeMenus(); downloadReceipt()">Download signed receipt</button>
+                <button class="menu-item" onclick="closeMenus(); openReceiptModal()">Check a receipt</button>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="exportPacket()">Export dispute packet</button>
+          </div>
+        </div>
+        <div id="chainMsg"></div>
+        <div class="timeline" id="blockList"></div>
+      </div>
+
+      <details class="card demotools hidden" id="demoTools">
+        <summary>Demo tools: simulate an attack (demo leases only)</summary>
+        <p class="muted">These change the stored record on purpose, so you can watch the checks catch it.</p>
+        <div class="btn-row">
+          <button class="btn btn-danger" onclick="tamperDemo(false)">Edit block 0</button>
+          <button class="btn btn-danger" onclick="tamperDemo(true)">Edit block 0 and recompute every hash</button>
+        </div>
+        <div id="demoMsg"></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>Rental Evidence Vault · PBL-III project, Manipal University Jaipur</span>
+    <span class="footer-links">
+      <a href="#" onclick="openInfo('privacy'); return false;">Privacy</a>
+      <a href="#" onclick="openInfo('terms'); return false;">Terms</a>
+      <a href="#" onclick="openInfo('contact'); return false;">Contact</a>
+    </span>
+  </div>
+</footer>
+
+<div class="modal-backdrop hidden" id="modalBackdrop" onclick="if(event.target===this) closeModal()">
+  <div class="modal" id="modalBox" role="dialog" aria-modal="true"></div>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script>
+let token = localStorage.getItem("rev_token");
+let username = localStorage.getItem("rev_username");
+let role = localStorage.getItem("rev_role");
+let currentLeaseId = null;
+let authMode = "login";
+let myPublicKey = localStorage.getItem("rev_pub");
+let lastDetail = null;
+const enc = new TextEncoder();
+
+function bytesToHex(buf) {
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function hexToBytes(hex) {
+  const out = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+
+function stableStringify(value) {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return "[" + value.map(stableStringify).join(",") + "]";
+  const keys = Object.keys(value).sort();
+  return "{" + keys.map((k) => JSON.stringify(k) + ":" + stableStringify(value[k])).join(",") + "}";
+}
+
+async function sha256Hex(bytes) {
+  return bytesToHex(await crypto.subtle.digest("SHA-256", bytes));
+}
+
+async function fingerprintOf(publicKeyHex) {
+  const digest = await sha256Hex(hexToBytes(publicKeyHex));
+  return digest.slice(0, 16).toUpperCase().match(/.{4}/g).join("-");
+}
+
+async function generateKeyPair() {
+  const pair = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]);
+  const spki = await crypto.subtle.exportKey("spki", pair.publicKey);
+  const jwk = await crypto.subtle.exportKey("jwk", pair.privateKey);
+  return { publicKey: bytesToHex(spki), jwk };
+}
+
+function storeKey(name, pair) {
+  localStorage.setItem("rev_key_" + name, JSON.stringify({ publicKey: pair.publicKey, jwk: pair.jwk }));
+}
+
+function storedKey() {
+  try { return JSON.parse(localStorage.getItem("rev_key_" + username)); } catch (e) { return null; }
+}
+
+function hasSigningKey() {
+  const k = storedKey();
+  return Boolean(k && k.publicKey === myPublicKey);
+}
+
+async function signMessage(message) {
+  if (!hasSigningKey()) throw new Error("This device does not hold your signing key. Import your key backup first.");
+  const key = await crypto.subtle.importKey("jwk", storedKey().jwk, { name: "Ed25519" }, false, ["sign"]);
+  return bytesToHex(await crypto.subtle.sign({ name: "Ed25519" }, key, enc.encode(message)));
+}
+
+async function verifyWith(publicKeyHex, message, signatureHex) {
+  try {
+    const key = await crypto.subtle.importKey("spki", hexToBytes(publicKeyHex), { name: "Ed25519" }, false, ["verify"]);
+    return await crypto.subtle.verify({ name: "Ed25519" }, key, hexToBytes(signatureHex), enc.encode(message));
+  } catch (e) {
+    return false;
+  }
+}
+
+function payloadFor(leaseId, ev) {
+  return { v: 1, leaseId, eventId: ev.id, type: ev.type, data: ev.data, proposedBy: ev.proposedBy, createdAt: ev.createdAt };
+}
+
+function confirmerMessageFor(leaseId, ev, prevHash) {
+  return stableStringify({ payload: payloadFor(leaseId, ev), prevHash });
+}
+
+function downloadJson(name, obj) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" }));
+  const a = document.createElement("a");
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadKeyBackup() {
+  const k = storedKey();
+  if (!k || k.publicKey !== myPublicKey) { showToast("This device has no key to back up."); return; }
+  downloadJson(`rev-key-${username}.json`, { app: "rental-evidence-vault", username, publicKey: k.publicKey, jwk: k.jwk });
+}
+
+async function importKeyFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    if (parsed.username !== username || parsed.publicKey !== myPublicKey) throw new Error("This backup belongs to a different account.");
+    const key = await crypto.subtle.importKey("jwk", parsed.jwk, { name: "Ed25519" }, false, ["sign"]);
+    const sig = bytesToHex(await crypto.subtle.sign({ name: "Ed25519" }, key, enc.encode("check")));
+    if (!(await verifyWith(myPublicKey, "check", sig))) throw new Error("This key does not match your registered key.");
+    storeKey(username, { publicKey: parsed.publicKey, jwk: parsed.jwk });
+    document.getElementById("keyPrompt").classList.add("hidden");
+    showToast("Key restored. You can sign on this device now.", true);
+  } catch (e) {
+    showToast(e.message || "Could not read that key file.");
+  }
+  input.value = "";
+}
+
+function ensureKey() {
+  if (hasSigningKey()) { document.getElementById("keyPrompt").classList.add("hidden"); return true; }
+  const el = document.getElementById("keyPrompt");
+  el.classList.remove("hidden");
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  return false;
+}
+
+function api(path, opts = {}) {
+  const isFormData = opts.body instanceof FormData;
+  const headers = Object.assign(isFormData ? {} : { "Content-Type": "application/json" }, opts.headers || {});
+  if (token) headers["Authorization"] = "Bearer " + token;
+  return fetch(path, Object.assign({}, opts, { headers })).then(async (r) => {
+    const body = await r.json().catch(() => ({}));
+    if (r.status === 401) {
+      logout();
+      showToast("Session expired. Please log in again.");
+      throw new Error("Session expired. Please log in again.");
+    }
+    if (!r.ok) throw new Error(body.error || "Request failed");
+    return body;
+  });
+}
+
+let toastTimer = null;
+function showToast(text, good) {
+  const el = document.getElementById("toast");
+  el.textContent = text;
+  el.className = good ? "good" : "";
+  el.style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.display = "none"; }, 4000);
+}
+
+window.addEventListener("unhandledrejection", (e) => {
+  e.preventDefault();
+  showToast(e.reason && e.reason.message ? e.reason.message : "Something went wrong");
+});
+
+function shrinkImage(file, maxSide, quality) {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith("image/") || file.type === "image/gif") return resolve(file);
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => resolve(blob || file), "image/jpeg", quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
+async function hydrateDocs() {
+  for (const a of document.querySelectorAll("a[data-doc]")) {
+    if (a.href) continue;
+    try {
+      const r = await fetch(`/api/leases/${currentLeaseId}/photos/${a.dataset.doc}`, { headers: { Authorization: "Bearer " + token } });
+      if (!r.ok) continue;
+      a.href = URL.createObjectURL(await r.blob());
+    } catch (e) {}
+  }
+}
+
+function docLink(photoId) {
+  return `<div class="thumb-row"><a class="doc-link" data-doc="${photoId}" target="_blank" rel="noopener">${icon("file", 16)} Open the signed document</a></div>`;
+}
+
+async function hydratePhotos() {
+  hydrateDocs();
+  const imgs = document.querySelectorAll("img[data-photo]");
+  for (const img of imgs) {
+    if (img.src) continue;
+    try {
+      const r = await fetch(`/api/leases/${currentLeaseId}/photos/${img.dataset.photo}`, { headers: { Authorization: "Bearer " + token } });
+      if (!r.ok) continue;
+      img.src = URL.createObjectURL(await r.blob());
+    } catch (e) {}
+  }
+}
+
+async function verifyPhoto(photoId, resultId) {
+  const el = document.getElementById(resultId);
+  try {
+    const res = await api(`/api/leases/${currentLeaseId}/photos/${photoId}/verify`);
+    const ok = res.matchesStoredHash && res.inChain && res.matchesChainHash;
+    el.className = "pvres " + (ok ? "ok" : "bad");
+    el.textContent = (ok ? "Verified: the stored file matches the hash sealed in block #" + res.blockIndex + "." : "Mismatch: this file no longer matches its recorded hash.") + " Recomputed " + res.recomputedHash.slice(0, 24) + "...";
+  } catch (e) {
+    el.className = "pvres bad";
+    el.textContent = e.message;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function showMsg(elId, text, ok) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = `<div class="banner ${ok ? "banner-ok" : "banner-bad"}" role="${ok ? "status" : "alert"}"><div class="banner-body">${escapeHtml(text)}</div><button class="banner-x" aria-label="Dismiss" onclick="this.parentElement.remove()">&times;</button></div>`;
+}
+
+const ICONS = {
+  home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  rupee: '<path d="M7 5h10M7 9h10M7 5c5 0 7 2 7 4s-2 4-7 4l7 7"/>',
+  tool: '<path d="M14.7 6.3a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.7-7.7"/><path d="M4 20l3-3"/>',
+  alert: '<path d="M12 3l10 18H2L12 3z"/><path d="M12 10v5M12 18h.01"/>',
+  exit: '<path d="M9 21H5V3h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+  file: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
+  checks: '<path d="M2 12l5 5 9-10"/><path d="M12 16l2 1 8-10"/>',
+  check: '<path d="M5 12l5 5 9-10"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  building: '<path d="M4 21V4h10v17M14 9h6v12M8 8h2M8 12h2M8 16h2M17 13h1M17 17h1M3 21h18"/>'
+};
+
+function icon(name, size) {
+  const s = size || 18;
+  return `<svg class="ic" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+}
+
+const CHIPS = [
+  { id: "VERIFICATION", type: "VERIFICATION", label: "Verification", icon: "shield", prefix: "" },
+  { id: "AGREEMENT", type: "AGREEMENT", label: "Agreement", icon: "file", prefix: "" },
+  { id: "DEPOSIT", type: "DEPOSIT", label: "Deposit", icon: "rupee", prefix: "" },
+  { id: "MOVE_IN", type: "MOVE_IN", label: "Move-in", icon: "home", prefix: "" },
+  { id: "RENT", type: "PAYMENT", label: "Rent paid", icon: "rupee", prefix: "" },
+  { id: "REPAIR", type: "MAINTENANCE", label: "Repair", icon: "tool", prefix: "" },
+  { id: "DAMAGE", type: "MAINTENANCE", label: "Damage", icon: "alert", prefix: "Damage: " },
+  { id: "MOVE_OUT", type: "MOVE_OUT", label: "Move-out", icon: "exit", prefix: "" },
+  { id: "OTHER", type: "MAINTENANCE_UPDATE", label: "Other", icon: "file", prefix: "" }
+];
+const CHIP_SETS = {
+  legacy: ["MOVE_IN", "RENT", "REPAIR", "DAMAGE", "MOVE_OUT", "OTHER"],
+  agreement: ["VERIFICATION", "AGREEMENT"],
+  "move-in": ["VERIFICATION", "DEPOSIT", "MOVE_IN"],
+  tenancy: ["DEPOSIT", "RENT", "REPAIR", "DAMAGE", "OTHER", "MOVE_OUT"],
+  "move-out": ["RENT", "REPAIR", "DAMAGE", "OTHER"]
+};
+const SINGLE_FILE = ["RENT", "DEPOSIT", "AGREEMENT"];
+const HINTS = {
+  VERIFICATION: "e.g. Identity and address proofs shown to each other, police verification form submitted",
+  AGREEMENT: "Anything else worth noting about the agreement (optional)",
+  DEPOSIT: "e.g. Paid by bank transfer, reference number",
+  MOVE_IN: "e.g. Hairline crack on the bedroom window, walls freshly painted, geyser works"
+};
+let selectedChip = null;
+let pendingPhotos = [];
+const MAX_PHOTOS = 6;
+
+function activeChips() {
+  const useSet = lastDetail && lastDetail.lease.requireAgreement ? lastDetail.phase : "legacy";
+  return (CHIP_SETS[useSet] || CHIP_SETS.legacy).map((id) => CHIPS.find((c) => c.id === id));
+}
+
+function eventKind(type, description) {
+  const d = description || "";
+  if (type === "MAINTENANCE" && d.startsWith("Damage: ")) return { label: "Damage", icon: "alert", text: d.slice(8) };
+  const map = { VERIFICATION: ["Verification", "shield"], AGREEMENT: ["Agreement", "file"], DEPOSIT: ["Deposit", "rupee"], MOVE_IN: ["Move-in", "home"], MOVE_OUT: ["Move-out", "exit"], PAYMENT: ["Rent paid", "rupee"], MAINTENANCE: ["Repair", "tool"], MAINTENANCE_UPDATE: ["Other", "file"] };
+  const m = map[type] || [type, "file"];
+  return { label: m[0], icon: m[1], text: d };
+}
+
+function fmtDate(value) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: String(value).length === 10 ? "UTC" : undefined });
+}
+
+function fmtDateTime(value) {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function fmtMoney(n) {
+  return "₹" + Number(n).toLocaleString("en-IN");
+}
+
+function displayName(u) {
+  return String(u || "").split(/[_\-.\s]+/).filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") || String(u || "");
+}
+
+function initials(u) {
+  const parts = displayName(u).split(" ").filter(Boolean);
+  return ((parts[0] || "?").charAt(0) + (parts.length > 1 ? parts[parts.length - 1].charAt(0) : "")).toUpperCase();
+}
+
+function go(path, ev) {
+  if (ev) ev.preventDefault();
+  history.pushState({}, "", path);
+  render();
+}
+
+function render() {
+  closeMenus();
+  const url = new URL(location.href);
+  let path = url.pathname.replace(/\/+$/, "") || "/";
+  if (path === "/login" && token) { history.replaceState({}, "", "/app"); path = "/app"; }
+  if (path === "/app" && !token) { history.replaceState({}, "", "/login"); path = "/login"; }
+  if (path !== "/" && path !== "/login" && path !== "/app") { history.replaceState({}, "", "/"); path = "/"; }
+
+  document.getElementById("landingView").classList.toggle("hidden", path !== "/");
+  document.getElementById("loginView").classList.toggle("hidden", path !== "/login");
+  document.getElementById("appView").classList.toggle("hidden", path !== "/app");
+  renderHeader();
+  window.scrollTo(0, 0);
+
+  if (path === "/login") {
+    setAuthMode(url.searchParams.get("mode") === "register" ? "register" : "login");
+  } else if (path === "/app") {
+    renderKeyState();
+    const leaseId = url.searchParams.get("lease");
+    if (leaseId) openLease(leaseId).catch(() => showDashboard().catch(() => {}));
+    else showDashboard().catch(() => {});
+  }
+}
+
+window.addEventListener("popstate", render);
+
+function renderHeader() {
+  const nav = document.getElementById("headerNav");
+  if (!token) {
+    nav.innerHTML = `<a class="btn btn-secondary btn-sm" href="/login" onclick="go('/login', event)">Log in</a>`;
+    return;
+  }
+  const name = displayName(username);
+  nav.innerHTML = `<a class="nav-link hide-sm" href="/app" onclick="go('/app', event)">${role === "society" ? "Requests" : "Your leases"}</a>
+    <div class="menu-wrap">
+      <button class="account-btn" id="accountBtn" aria-haspopup="true" onclick="toggleMenu('accountMenu', event)">
+        <span class="avatar">${escapeHtml(initials(username))}</span>
+        <span class="account-name hide-sm">${escapeHtml(name)}</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="menu menu-right hidden" id="accountMenu">
+        <div class="menu-head"><strong>${escapeHtml(name)}</strong><span class="muted">${escapeHtml(role || "")} · @${escapeHtml(username)}</span></div>
+        <button class="menu-item" onclick="closeMenus(); downloadKeyBackup()">Back up key</button>
+        <button class="menu-item" onclick="closeMenus(); openMyFingerprint()">Your key fingerprint</button>
+        <button class="menu-item" onclick="location.href='/lab.html'">Attack lab</button>
+        <button class="menu-item" onclick="closeMenus(); logout()">Log out</button>
+      </div>
+    </div>`;
+}
+
+function goSection(id, ev) {
+  if (ev) ev.preventDefault();
+  if (location.pathname !== "/") { history.pushState({}, "", "/"); render(); }
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
+function toggleMenu(id, ev) {
+  if (ev) ev.stopPropagation();
+  const el = document.getElementById(id);
+  const open = el.classList.contains("hidden");
+  closeMenus();
+  if (open) el.classList.remove("hidden");
+}
+
+function closeMenus() {
+  document.querySelectorAll(".menu").forEach((m) => m.classList.add("hidden"));
+}
+
+document.addEventListener("click", closeMenus);
+
+function openModal(html, wide) {
+  const box = document.getElementById("modalBox");
+  box.className = "modal" + (wide ? " modal-wide" : "");
+  box.innerHTML = html;
+  document.getElementById("modalBackdrop").classList.remove("hidden");
+  const focus = box.querySelector("[data-autofocus]") || box.querySelector("button, a, input");
+  if (focus) focus.focus();
+}
+
+function closeModal() {
+  document.getElementById("modalBackdrop").classList.add("hidden");
+  document.getElementById("modalBox").innerHTML = "";
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeModal(); closeMenus(); }
+});
+
+function modalHead(title) {
+  return `<div class="modal-head"><h2>${title}</h2><button class="icon-btn" aria-label="Close" onclick="closeModal()">&times;</button></div>`;
+}
+
+function openInfo(kind) {
+  const pages = {
+    privacy: ["Privacy", "<p>We keep your username, a hashed password, your public key, the events you and the other person sign, and any photos you attach. Photos and events are visible only to the two people on the lease.</p><p>Your private key is created in your browser and stays there. We never receive it.</p>"],
+    terms: ["Terms", "<p>This is a student project built for a university course. It is provided as it is, without any promise that it will stay available or that a court will accept the records. It is not legal advice.</p><p>Keep your own copies of anything important, including your key backup and any receipts you download.</p>"],
+    contact: ["Contact", "<p>Built by Raj Shukla for PBL-III at Manipal University Jaipur, Department of Computer Science and Engineering.</p><p>For questions about the project, please reach out through your course supervisor.</p>"]
+  };
+  const [title, body] = pages[kind];
+  openModal(modalHead(title) + `<div class="modal-body">${body}</div>`);
+}
+
+async function openMyFingerprint() {
+  const fp = myPublicKey ? await fingerprintOf(myPublicKey) : "not available";
+  openModal(modalHead("Your key fingerprint") + `<div class="modal-body"><p>This short code identifies the key on your device. The person you share a lease with can compare it with what they see for you.</p><div class="fp-box mono">${escapeHtml(fp)}</div><div class="btn-row"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div></div>`);
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  document.getElementById("tabLogin").classList.toggle("active", mode === "login");
+  document.getElementById("tabRegister").classList.toggle("active", mode === "register");
+  document.getElementById("tabLogin").setAttribute("aria-selected", mode === "login");
+  document.getElementById("tabRegister").setAttribute("aria-selected", mode === "register");
+  document.getElementById("roleField").classList.toggle("hidden", mode !== "register");
+  document.getElementById("authTitle").textContent = mode === "login" ? "Welcome back" : "Create your account";
+  document.getElementById("authSubmitBtn").textContent = mode === "login" ? "Log in" : "Create account";
+  document.getElementById("authPassword").setAttribute("autocomplete", mode === "login" ? "current-password" : "new-password");
+  document.getElementById("authMsg").innerHTML = "";
+}
+
+let selectedRole = "tenant";
+function setRole(r) {
+  selectedRole = r;
+  document.getElementById("roleTenant").classList.toggle("active", r === "tenant");
+  document.getElementById("roleLandlord").classList.toggle("active", r === "landlord");
+  document.getElementById("roleSociety").classList.toggle("active", r === "society");
+}
+
+async function submitAuth() {
+  const u = document.getElementById("authUsername").value.trim();
+  const p = document.getElementById("authPassword").value;
+  if (!u || !p) { showMsg("authMsg", "Username and password are required.", false); return; }
+  try {
+    if (authMode === "register") {
+      const pair = await generateKeyPair();
+      await api("/api/auth/register", { method: "POST", body: JSON.stringify({ username: u, password: p, role: selectedRole, publicKey: pair.publicKey }) });
+      storeKey(u, pair);
+      showMsg("authMsg", "Account created. Your device key was made in this browser. Logging you in...", true);
+    }
+    const res = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ username: u, password: p }) });
+    token = res.token; username = res.username; role = res.role; myPublicKey = res.publicKey;
+    localStorage.setItem("rev_pub", myPublicKey);
+    localStorage.setItem("rev_token", token);
+    localStorage.setItem("rev_username", username);
+    localStorage.setItem("rev_role", role);
+    enterApp();
+  } catch (e) {
+    showMsg("authMsg", e.message, false);
+  }
+}
+
+function b64url(bytes) {
+  return btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+async function tryDemo(user) {
+  try {
+    const res = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ username: user, password: "demo1234" }) });
+    const seed = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode("rev-demo-key:" + user)));
+    const spki = hexToBytes(res.publicKey);
+    const jwk = { kty: "OKP", crv: "Ed25519", d: b64url(seed), x: b64url(spki.slice(spki.length - 32)), ext: true, key_ops: ["sign"] };
+    storeKey(user, { publicKey: res.publicKey, jwk });
+    token = res.token; username = res.username; role = res.role; myPublicKey = res.publicKey;
+    localStorage.setItem("rev_pub", myPublicKey);
+    localStorage.setItem("rev_token", token);
+    localStorage.setItem("rev_username", username);
+    localStorage.setItem("rev_role", role);
+    enterApp();
+  } catch (e) {
+    showMsg("authMsg", "The sample rental is not ready yet. Wait a few seconds and try again.", false);
+  }
+}
+
+function logout() {
+  localStorage.removeItem("rev_token");
+  localStorage.removeItem("rev_username");
+  localStorage.removeItem("rev_role");
+  localStorage.removeItem("rev_pub");
+  lastDetail = null;
+  token = null; username = null; role = null; currentLeaseId = null;
+  document.getElementById("keyPrompt").classList.add("hidden");
+  history.pushState({}, "", "/");
+  render();
+}
+
+function enterApp() {
+  history.pushState({}, "", "/app");
+  render();
+}
+
+function renderKeyState() {
+  if (hasSigningKey()) document.getElementById("keyPrompt").classList.add("hidden");
+}
+
+async function showDashboard() {
+  document.getElementById("leaseView").classList.add("hidden");
+  document.getElementById("societyView").classList.toggle("hidden", role !== "society");
+  if (role === "society") {
+    document.getElementById("dashView").classList.add("hidden");
+    currentLeaseId = null;
+    await showSocietyDashboard();
+    return;
+  }
+  document.getElementById("dashView").classList.remove("hidden");
+  toggleLeaseForm(false);
+  currentLeaseId = null;
+  document.getElementById("addLeaseBtn").classList.toggle("hidden", role !== "landlord");
+  const leases = await api("/api/leases");
+  const grid = document.getElementById("leaseGrid");
+  if (leases.length === 0) {
+    grid.innerHTML = role === "landlord"
+      ? `<div class="card empty-card"><h2>No leases yet</h2><p>Add a lease for a tenant who already has an account. Ask them for their username.</p><button class="btn btn-primary" onclick="toggleLeaseForm(true)">Add a lease</button></div>`
+      : `<div class="card empty-card"><h2>No leases yet</h2><p>Your landlord adds the lease using your username. Share it with them:</p><div class="fp-box mono">${escapeHtml(username)}</div></div>`;
+    return;
+  }
+  grid.innerHTML = leases.map((l) => {
+    const other = l.tenantUsername === username ? l.landlordUsername : l.tenantUsername;
+    const otherRole = l.tenantUsername === username ? "Landlord" : "Tenant";
+    const rent = l.rentAmount ? fmtMoney(l.rentAmount) + "/month" : "Rent not set";
+    const pills = [];
+    if (l.status === "ended") pills.push(`<span class="pill pill-neutral">Ended</span>`);
+    else if (l.requireAgreement && l.phase === "agreement") pills.push(`<span class="pill pill-amber">Agreement pending</span>`);
+    else if (l.requireAgreement && l.phase === "move-in") pills.push(`<span class="pill pill-amber">Move-in pending</span>`);
+    else if (l.rent && l.rent.status !== "Not tracked") pills.push(`<span class="pill ${rentPillClass(l.rent.status)}">${escapeHtml(l.rent.status)}</span>`);
+    else pills.push(`<span class="pill pill-neutral">Active</span>`);
+    return `<a class="card lease-row ${l.status === "ended" ? "is-ended" : ""}" href="/app?lease=${l.id}" onclick="go('/app?lease=${l.id}', event)">
+      <div class="lease-row-main">
+        <h2>${escapeHtml(l.address)}</h2>
+        <p class="muted">${otherRole}: ${escapeHtml(displayName(other))} · ${rent}${l.startDate ? " · since " + fmtDate(l.startDate) : ""}</p>
+      </div>
+      <div class="lease-row-side">${pills.join("")}<span class="chev" aria-hidden="true">&rsaquo;</span></div>
+    </a>`;
+  }).join("");
+}
+
+function rentPillClass(status) {
+  return { Paid: "pill-good", Due: "pill-amber", Overdue: "pill-orange" }[status] || "pill-neutral";
+}
+
+function toggleLeaseForm(show) {
+  document.getElementById("leaseFormWrap").classList.toggle("hidden", !show);
+  if (show) document.getElementById("leaseAddress").focus();
+}
+
+async function createLease() {
+  const address = document.getElementById("leaseAddress").value.trim();
+  const tenantUsername = document.getElementById("leaseTenant").value.trim();
+  const rentAmount = document.getElementById("leaseRent").value.trim();
+  const startDate = document.getElementById("leaseStartDate").value;
+  const demo = document.getElementById("leaseDemo").checked;
+  const requireAgreement = document.getElementById("leaseAgreement").checked;
+  const societyUsername = document.getElementById("leaseSociety").value.trim();
+  try {
+    await api("/api/leases", {
+      method: "POST",
+      body: JSON.stringify({ address, tenantUsername, rentAmount, startDate, demo, requireAgreement, societyUsername }),
+    });
+    ["leaseAddress", "leaseTenant", "leaseRent", "leaseStartDate", "leaseSociety"].forEach((id) => { document.getElementById(id).value = ""; });
+    document.getElementById("leaseDemo").checked = false;
+    document.getElementById("leaseMsg").innerHTML = "";
+    showDashboard();
+  } catch (e) {
+    showMsg("leaseMsg", e.message, false);
+  }
+}
+
+async function openLease(id) {
+  currentLeaseId = id;
+  document.getElementById("dashView").classList.add("hidden");
+  document.getElementById("leaseView").classList.remove("hidden");
+  document.getElementById("eventMsg").innerHTML = "";
+  document.getElementById("chainMsg").innerHTML = "";
+  resetComposer();
+  await refreshLeaseView();
+}
+
+async function refreshLeaseView() {
+  const detail = await api(`/api/leases/${currentLeaseId}`);
+  lastDetail = detail;
+  renderLeaseHead(detail.lease, detail.fingerprints);
+  renderStats(detail.lease, detail.chain.blocks, detail.pendingEvents, detail.rent);
+  renderPhase(detail);
+  renderPending(detail.pendingEvents, detail.lease);
+  renderBlocks(detail.chain.blocks);
+  const empty = detail.chain.blocks.length === 0 && detail.pendingEvents.length === 0;
+  document.getElementById("lv_onboard").classList.toggle("hidden", !(empty && detail.lease.status === "active" && !detail.lease.requireAgreement));
+  await renderSociety(detail);
+  hydratePhotos();
+  runSilentVerify(detail);
+}
+
+function otherParty(lease) {
+  return lease.tenantUsername === username ? lease.landlordUsername : lease.tenantUsername;
+}
+
+function fpConfirmKey(lease) {
+  return "rev_fpok_" + username + "_" + lease.id;
+}
+
+function connectionConfirmed(lease, fingerprints) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(fpConfirmKey(lease)));
+    return Boolean(saved) && saved.a === fingerprints[lease.tenantUsername] && saved.b === fingerprints[lease.landlordUsername];
+  } catch (e) { return false; }
+}
+
+function renderLeaseHead(lease, fingerprints) {
+  document.getElementById("lv_address").textContent = lease.address;
+  const iAmTenant = lease.tenantUsername === username;
+  const other = otherParty(lease);
+  const parts = [
+    `You (${iAmTenant ? "tenant" : "landlord"})`,
+    `${iAmTenant ? "Landlord" : "Tenant"}: ${escapeHtml(displayName(other))}`,
+    lease.rentAmount ? fmtMoney(lease.rentAmount) + "/month" : "Rent not set"
+  ];
+  if (lease.startDate) parts.push("since " + fmtDate(lease.startDate));
+  if (lease.societyUsername) parts.push("Society office: " + escapeHtml(displayName(lease.societyUsername)));
+  document.getElementById("lv_meta").innerHTML = parts.join(" · ");
+
+  const conn = document.getElementById("lv_conn");
+  const ok = connectionConfirmed(lease, fingerprints);
+  conn.className = "conn-badge " + (ok ? "ok" : "todo");
+  conn.innerHTML = ok ? `${icon("check", 14)} Verified connection` : `${icon("shield", 14)} Check your connection`;
+
+  document.getElementById("demoTools").classList.toggle("hidden", !lease.demo);
+  document.getElementById("lv_menuwrap").classList.toggle("hidden", lease.status !== "active");
+  document.getElementById("lv_logsection").classList.toggle("hidden", lease.status !== "active");
+  document.getElementById("waitThemName").textContent = displayName(other);
+  renderChips();
+}
+
+function openConnectionModal() {
+  const d = lastDetail;
+  if (!d) return;
+  const lease = d.lease;
+  const me = username;
+  const other = otherParty(lease);
+  const ok = connectionConfirmed(lease, d.fingerprints);
+  openModal(modalHead("Check your connection") + `<div class="modal-body">
+    <div class="fp-pair">
+      <div class="fp-col"><span class="muted">You</span><div class="fp-box mono">${escapeHtml(d.fingerprints[me])}</div></div>
+      <div class="fp-col"><span class="muted">${escapeHtml(displayName(other))}</span><div class="fp-box mono">${escapeHtml(d.fingerprints[other])}</div></div>
+    </div>
+    <p>Ask the other person to read their code aloud. If it matches, you're connected to the right person.</p>
+    <p class="muted">Each of you should see the same two codes on your own screen. If they differ, don't sign anything and contact the other person another way.</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" data-autofocus onclick="confirmConnection()">${ok ? "Codes still match" : "The codes match"}</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div></div>`);
+}
+
+function confirmConnection() {
+  const d = lastDetail;
+  const lease = d.lease;
+  try {
+    localStorage.setItem(fpConfirmKey(lease), JSON.stringify({ a: d.fingerprints[lease.tenantUsername], b: d.fingerprints[lease.landlordUsername] }));
+  } catch (e) {}
+  closeModal();
+  renderLeaseHead(lease, d.fingerprints);
+  showToast("Connection marked as verified on this device.", true);
+}
+
+function confirmEndLease() {
+  closeMenus();
+  openModal(modalHead("End this lease?") + `<div class="modal-body"><p>The record stays visible and can still be verified, but no new events can be added.</p><div class="btn-row"><button class="btn btn-danger-solid" onclick="endLease()">End lease</button><button class="btn btn-ghost" data-autofocus onclick="closeModal()">Keep it open</button></div></div>`);
+}
+
+async function endLease() {
+  closeModal();
+  try {
+    await api(`/api/leases/${currentLeaseId}/end`, { method: "POST" });
+    refreshLeaseView();
+  } catch (e) {
+    showToast(e.message);
+  }
+}
+
+function renderStats(lease, blocks, pending, rent) {
+  const needsMe = pending.filter((e) => e.proposedBy !== username).length;
+  const monthName = new Date().toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" });
+  const bits = [];
+  if (lease.status === "ended") bits.push(`<span class="pill pill-neutral">Lease ended</span>`);
+  else if (rent && rent.status !== "Not tracked") bits.push(`<span class="bit">${monthName} rent: <span class="pill ${rentPillClass(rent.status)}">${escapeHtml(rent.status)}</span></span>`);
+  else bits.push(`<span class="pill pill-neutral">Active</span>`);
+  if (blocks.length > 0) bits.push(`<span class="bit">${blocks.length} ${blocks.length === 1 ? "event" : "events"}</span>`);
+  if (needsMe > 0) bits.push(`<span class="pill pill-amber">${needsMe} waiting on you</span>`);
+  else if (lease.status === "active") bits.push(`<span class="bit muted">nothing waiting on you</span>`);
+  document.getElementById("lv_stats").innerHTML = bits.join(`<span class="dot-sep" aria-hidden="true">·</span>`);
+}
+
+function renderChips() {
+  const chips = activeChips();
+  if (!chips.some((c) => c.id === selectedChip)) selectedChip = chips[0].id;
+  document.getElementById("chipRow").innerHTML = chips.map((c) =>
+    `<button type="button" class="chip ${c.id === selectedChip ? "active" : ""}" role="radio" aria-checked="${c.id === selectedChip}" onclick="selectChip('${c.id}')">${icon(c.icon, 16)}<span>${c.label}</span></button>`
+  ).join("");
+  const rent = selectedChip === "RENT";
+  const deposit = selectedChip === "DEPOSIT";
+  const agreement = selectedChip === "AGREEMENT";
+  document.getElementById("rentFields").classList.toggle("hidden", !(rent || deposit));
+  document.getElementById("dateField").classList.toggle("hidden", !rent);
+  document.getElementById("amountLabel").textContent = deposit ? "Deposit paid (₹)" : "Amount paid (₹)";
+  document.getElementById("agreementFields").classList.toggle("hidden", !agreement);
+  document.getElementById("photoField").classList.toggle("hidden", selectedChip === "VERIFICATION");
+  document.getElementById("photoLabel").textContent = agreement ? "Agreement document" : rent || deposit ? "Receipt" : "Photos";
+  document.getElementById("eventPhoto").accept = agreement ? "application/pdf,image/*" : "image/*";
+  document.getElementById("eventDesc").placeholder = HINTS[selectedChip] || "e.g. Tap in the kitchen is leaking";
+  if (rent && !document.getElementById("eventDate").value) document.getElementById("eventDate").value = new Date().toISOString().slice(0, 10);
+  if (agreement && !document.getElementById("agrRent").value && lastDetail && lastDetail.lease.rentAmount) document.getElementById("agrRent").value = lastDetail.lease.rentAmount;
+  document.getElementById("photoHint").textContent = agreement ? "The signed agreement as a PDF or a photo, 5 MB" : SINGLE_FILE.includes(selectedChip) ? "One receipt photo, 5 MB" : `Up to ${MAX_PHOTOS} photos, 5 MB each`;
+}
+
+function selectChip(id) {
+  selectedChip = id;
+  const allowPdf = id === "AGREEMENT";
+  const kept = pendingPhotos.filter((p) => allowPdf || p.file.type.startsWith("image/"));
+  pendingPhotos.filter((p) => !kept.includes(p)).forEach((p) => URL.revokeObjectURL(p.url));
+  pendingPhotos = SINGLE_FILE.includes(id) ? kept.slice(0, 1) : kept;
+  renderThumbs();
+  renderChips();
+}
+
+function startMoveIn() {
+  selectChip("MOVE_IN");
+  const box = document.getElementById("lv_logsection");
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("photoDrop").focus();
+}
+
+function addPhotos(fileList) {
+  const limit = SINGLE_FILE.includes(selectedChip) ? 1 : MAX_PHOTOS;
+  const allowPdf = selectedChip === "AGREEMENT";
+  let skipped = 0;
+  for (const f of Array.from(fileList)) {
+    if (!f.type.startsWith("image/") && !(allowPdf && f.type === "application/pdf")) { skipped++; continue; }
+    if (pendingPhotos.length >= limit) { skipped++; continue; }
+    pendingPhotos.push({ file: f, url: URL.createObjectURL(f) });
+  }
+  if (skipped) showToast(skipped + (skipped === 1 ? " file was skipped" : " files were skipped") + ": " + (allowPdf ? "a PDF or an image" : "only images") + ", up to " + limit + ".");
+  renderThumbs();
+}
+
+function removePhoto(i) {
+  URL.revokeObjectURL(pendingPhotos[i].url);
+  pendingPhotos.splice(i, 1);
+  renderThumbs();
+}
+
+function renderThumbs() {
+  document.getElementById("photoThumbs").innerHTML = pendingPhotos.map((p, i) =>
+    `<div class="thumb ${p.file.type === "application/pdf" ? "thumb-doc" : ""}">${p.file.type === "application/pdf" ? `${icon("file", 28)}<span>${escapeHtml(p.file.name.slice(0, 18))}</span>` : `<img src="${p.url}" alt="Selected photo ${i + 1}">`}<button type="button" class="thumb-x" aria-label="Remove file ${i + 1}" onclick="removePhoto(${i})">&times;</button></div>`
+  ).join("");
+}
+
+function resetComposer() {
+  pendingPhotos.forEach((p) => URL.revokeObjectURL(p.url));
+  pendingPhotos = [];
+  selectedChip = null;
+  document.getElementById("eventDesc").value = "";
+  ["agrRent", "agrDeposit"].forEach((id) => { document.getElementById(id).value = ""; });
+  document.getElementById("agrTerm").value = "11";
+  document.getElementById("agrNotice").value = "30";
+  document.getElementById("eventAmount").value = "";
+  document.getElementById("eventDate").value = "";
+  document.getElementById("eventPhoto").value = "";
+  renderThumbs();
+  renderChips();
+}
+
+function wireDropzone() {
+  const zone = document.getElementById("photoDrop");
+  const input = document.getElementById("eventPhoto");
+  zone.addEventListener("click", (e) => { if (e.target !== input) input.click(); });
+  zone.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); } });
+  input.addEventListener("change", () => { addPhotos(input.files); input.value = ""; });
+  ["dragenter", "dragover"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.remove("over"); }));
+  zone.addEventListener("drop", (e) => { if (e.dataTransfer && e.dataTransfer.files) addPhotos(e.dataTransfer.files); });
+}
+
+function newEventId() {
+  return "evt-" + bytesToHex(crypto.getRandomValues(new Uint8Array(4)));
+}
+
+async function sendJsonEvent(type, data, id) {
+  const createdAt = new Date().toISOString();
+  const signature = await signMessage(stableStringify(payloadFor(currentLeaseId, { id, type, data, proposedBy: username, createdAt })));
+  return api(`/api/leases/${currentLeaseId}/events`, { method: "POST", body: JSON.stringify({ type, id, createdAt, signature, data }) });
+}
+
+async function proposeEvent() {
+  if (!ensureKey()) return;
+  const chip = CHIPS.find((c) => c.id === selectedChip);
+  const typed = document.getElementById("eventDesc").value.trim();
+  const amount = document.getElementById("eventAmount").value;
+  const paidOn = document.getElementById("eventDate").value;
+  const isRent = chip.type === "PAYMENT";
+  const isDeposit = chip.type === "DEPOSIT";
+  const isAgreement = chip.type === "AGREEMENT";
+  const isVerification = chip.type === "VERIFICATION";
+  let eventAmount = null;
+  let base = chip.prefix + typed;
+
+  if (isRent && !(Number(amount) > 0)) { showMsg("eventMsg", "Enter the amount paid.", false); return; }
+  if (isDeposit && !(Number(amount) > 0)) { showMsg("eventMsg", "Enter the deposit amount.", false); return; }
+  if (isVerification && typed.length < 3) { showMsg("eventMsg", "Write what was verified.", false); return; }
+  if (!typed && pendingPhotos.length === 0 && !isRent && !isDeposit && !isAgreement) { showMsg("eventMsg", "Add a note or at least one photo.", false); return; }
+
+  if (isRent) {
+    base = "Rent paid" + (paidOn ? " on " + fmtDate(paidOn) : "") + (typed ? " — " + typed : "");
+    eventAmount = Number(amount);
+  } else if (isDeposit) {
+    base = "Security deposit paid" + (typed ? " — " + typed : "");
+    eventAmount = Number(amount);
+  } else if (isAgreement) {
+    const rent = Number(document.getElementById("agrRent").value);
+    const term = Number(document.getElementById("agrTerm").value);
+    const deposit = Number(document.getElementById("agrDeposit").value);
+    const notice = Number(document.getElementById("agrNotice").value);
+    if (!(rent > 0) || !(term > 0) || !(notice >= 0)) { showMsg("eventMsg", "Enter the monthly rent, the term and the notice period.", false); return; }
+    if (pendingPhotos.length === 0) { showMsg("eventMsg", "Attach the agreement document. Its fingerprint is what both of you sign.", false); return; }
+    base = `Rental agreement: ${fmtMoney(rent)} per month for ${term} months${deposit > 0 ? ", security deposit " + fmtMoney(deposit) : ""}, ${notice} days notice.` + (typed ? " " + typed : "");
+    if (base.length > 600) { showMsg("eventMsg", "That note is too long. Shorten it a little.", false); return; }
+    eventAmount = rent;
+  }
+
+  const files = pendingPhotos.length && !isVerification ? pendingPhotos.map((p) => p.file) : [null];
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  let sent = 0;
+  try {
+    for (let i = 0; i < files.length; i++) {
+      const description = files.length > 1 ? `${base} (photo ${i + 1} of ${files.length})` : base;
+      const data = { description };
+      if (eventAmount !== null && i === 0) data.amount = eventAmount;
+      let photoFile = files[i];
+      if (photoFile) {
+        photoFile = await shrinkImage(photoFile, 1600, 0.8);
+        data.photoHash = await sha256Hex(await photoFile.arrayBuffer());
+      }
+      const id = newEventId();
+      const createdAt = new Date().toISOString();
+      const payload = payloadFor(currentLeaseId, { id, type: chip.type, data, proposedBy: username, createdAt });
+      const signature = await signMessage(stableStringify(payload));
+      let body;
+      if (photoFile) {
+        body = new FormData();
+        body.append("type", chip.type);
+        body.append("id", id);
+        body.append("createdAt", createdAt);
+        body.append("signature", signature);
+        body.append("data", JSON.stringify(data));
+        body.append("photo", photoFile, photoFile.type === "application/pdf" ? "agreement.pdf" : "photo.jpg");
+      } else {
+        body = JSON.stringify({ type: chip.type, id, createdAt, signature, data });
+      }
+      await api(`/api/leases/${currentLeaseId}/events`, { method: "POST", body });
+      sent++;
+    }
+    const who = displayName(otherParty(lastDetail.lease));
+    showMsg("eventMsg", sent > 1 ? `${sent} events sent. ${who} will see them under "Waiting on you".` : `Sent. ${who} will see it under "Waiting on you".`, true);
+    resetComposer();
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("eventMsg", (sent ? `${sent} sent, then it stopped: ` : "") + e.message, false);
+    if (sent) refreshLeaseView();
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function confirmEvent(eventId) {
+  if (!ensureKey()) return;
+  try {
+    const ev = lastDetail.pendingEvents.find((x) => x.id === eventId);
+    const message = stableStringify(payloadFor(currentLeaseId, ev));
+    const proposerKey = lastDetail.publicKeys[ev.proposedBy];
+    if (!(await verifyWith(proposerKey, message, ev.proposerSignature))) {
+      throw new Error("The other person's signature on this event does not verify. Do not confirm it.");
+    }
+    if (ev.photoId) {
+      const r = await fetch(`/api/leases/${currentLeaseId}/photos/${ev.photoId}`, { headers: { Authorization: "Bearer " + token } });
+      const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
+      if (hash !== ev.data.photoHash) throw new Error("The photo on the server does not match the one that was signed. Do not confirm it.");
+    }
+    const fresh = await api(`/api/leases/${currentLeaseId}`);
+    const freshBlocks = fresh.chain.blocks;
+    const prevHash = freshBlocks.length ? freshBlocks[freshBlocks.length - 1].blockHash : "0".repeat(64);
+    const signature = await signMessage(confirmerMessageFor(currentLeaseId, ev, prevHash));
+    await api(`/api/leases/${currentLeaseId}/events/${eventId}/confirm`, { method: "POST", body: JSON.stringify({ signature }) });
+    showMsg("eventMsg", "Signed by both of you and added to the ledger.", true);
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("eventMsg", e.message, false);
+    document.getElementById("eventMsg").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+function pendingCard(e, mine, lease) {
+  const kind = eventKind(e.type, e.data.description);
+  const amount = e.data.amount ? ` · ${fmtMoney(e.data.amount)}` : "";
+  const photo = e.photoId ? (e.type === "AGREEMENT" ? docLink(e.photoId) : `<div class="thumb-row"><button class="thumb-btn" onclick="openLightbox(this)" aria-label="Open photo"><img data-photo="${e.photoId}" alt="Evidence photo"></button></div>`) : "";
+  const proposer = mine ? "You" : displayName(e.proposedBy);
+  return `<div class="card event-card">
+    <div class="event-top"><span class="kind">${icon(kind.icon, 16)} ${kind.label}</span><span class="pill pill-amber">Not signed by both yet</span></div>
+    ${photo}
+    <p class="event-text">${escapeHtml(kind.text)}${amount}</p>
+    <p class="muted small">${proposer} sent this on ${fmtDateTime(e.createdAt)}</p>
+    ${mine ? "" : `<div class="btn-row"><button class="btn btn-primary" onclick="confirmEvent('${e.id}')">Confirm and sign</button></div>`}
+  </div>`;
+}
+
+function renderPending(events, lease) {
+  const you = events.filter((e) => e.proposedBy !== username);
+  const them = events.filter((e) => e.proposedBy === username);
+  document.getElementById("waitYou").classList.toggle("hidden", you.length === 0);
+  document.getElementById("waitThem").classList.toggle("hidden", them.length === 0);
+  document.getElementById("pendingYou").innerHTML = you.map((e) => pendingCard(e, false, lease)).join("");
+  document.getElementById("pendingThem").innerHTML = them.map((e) => pendingCard(e, true, lease)).join("");
+}
+
+function timelineItem(b) {
+  const kind = eventKind(b.type, b.data.description);
+  const amount = b.data.amount ? ` · ${fmtMoney(b.data.amount)}` : "";
+  const img = `<img data-photo="${b.photoId}" alt="Evidence photo">`;
+  const noun = b.type === "AGREEMENT" ? "Document" : "Photo";
+  const photo = b.photoId ? (b.type === "AGREEMENT" ? docLink(b.photoId) : `<div class="thumb-row"><button class="thumb-btn" onclick="openLightbox(this)" aria-label="Open photo">${img}</button></div>`) : "";
+  const photoTech = b.photoId
+    ? `<div class="tech-row"><span class="muted">${noun} hash</span><span class="mono" title="${b.data.photoHash}">${b.data.photoHash.slice(0, 24)}…</span></div>
+       <div class="btn-row tight"><button class="btn btn-secondary btn-sm" onclick="verifyPhoto('${b.photoId}', 'pv-${b.index}')">Verify ${noun.toLowerCase()}</button></div>
+       <div class="pvres" id="pv-${b.index}"></div>`
+    : "";
+  return `<div class="tl-item">
+    <div class="tl-date"><strong>${fmtDate(b.finalizedAt)}</strong><span class="muted small">${new Date(b.finalizedAt).toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit" })}</span></div>
+    <div class="tl-rail" aria-hidden="true"><span class="tl-dot"></span></div>
+    <div class="card event-card tl-card">
+      <div class="event-top"><span class="kind">${icon(kind.icon, 16)} ${kind.label}</span><span class="signed">${icon("checks", 16)} Signed by both</span></div>
+      ${photo}
+      <p class="event-text">${escapeHtml(kind.text)}${amount}</p>
+      <details class="tech">
+        <summary>Signing details</summary>
+        <div class="tech-row"><span class="muted">Sent by</span><span>${escapeHtml(displayName(b.proposedBy))}</span></div>
+        <div class="tech-row"><span class="muted">Confirmed by</span><span>${escapeHtml(displayName(b.confirmedBy))}</span></div>
+        <div class="tech-row"><span class="muted">Locked</span><span>${fmtDateTime(b.finalizedAt)}</span></div>
+        <div class="tech-row"><span class="muted">Entry no.</span><span>#${b.index}</span></div>
+        <div class="tech-row"><span class="muted">Block hash</span><span class="mono" title="${b.blockHash}">${b.blockHash.slice(0, 24)}…</span></div>
+        ${photoTech}
+      </details>
+    </div>
+  </div>`;
+}
+
+function renderBlocks(blocks) {
+  const wrap = document.getElementById("ledgerWrap");
+  wrap.classList.toggle("hidden", blocks.length === 0);
+  const el = document.getElementById("blockList");
+  if (blocks.length === 0) { el.innerHTML = ""; return; }
+  el.innerHTML = blocks.slice().reverse().map((b) => timelineItem(b)).join("");
+}
+
+function openLightbox(btn) {
+  const img = btn.querySelector("img");
+  if (!img || !img.src) return;
+  openModal(`<div class="lightbox"><button class="icon-btn lb-close" aria-label="Close" onclick="closeModal()">&times;</button><img src="${img.src}" alt="Evidence photo, full size"></div>`, true);
+}
+
+async function verifyChain() {
+  try {
+    const res = await api(`/api/leases/${currentLeaseId}/chain/verify`);
+    showMsg("chainMsg", res.valid ? "The server found no changes anywhere in the record." : `The server found a problem. ${res.reason}`, res.valid);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function tamperDemo(rehash) {
+  try {
+    const res = await api(`/api/leases/${currentLeaseId}/chain/demo-tamper`, { method: "POST", body: JSON.stringify({ blockIndex: 0, rehash }) });
+    showMsg("demoMsg", res.message, false);
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("demoMsg", e.message, false);
+  }
+}
+
+async function exportPacket() {
+  try {
+    const res = await fetch(`/api/leases/${currentLeaseId}/chain/export`, { headers: { Authorization: "Bearer " + token } });
+    if (!res.ok) throw new Error((await res.json()).error || "Export failed");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `dispute-export-${currentLeaseId}.json`; a.click();
+    URL.revokeObjectURL(url);
+    showMsg("chainMsg", "Dispute packet downloaded.", true);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function clientVerify(detail, withPhotos) {
+  const { lease, chain, publicKeys } = detail;
+  const parties = [lease.tenantUsername, lease.landlordUsername];
+  let prev = "0".repeat(64);
+  let photosChecked = 0;
+  for (const b of chain.blocks) {
+    const bad = (reason) => ({ valid: false, index: b.index, reason: `Entry ${b.index}: ${reason}` });
+    if (b.prevHash !== prev) return bad("does not link to the entry before it.");
+    const message = stableStringify(payloadFor(lease.id, { id: b.eventId, type: b.type, data: b.data, proposedBy: b.proposedBy, createdAt: b.createdAt }));
+    if ((await sha256Hex(enc.encode(message))) !== b.dataHash) return bad("the recorded details do not match their hash.");
+    const blockHash = await sha256Hex(enc.encode(stableStringify({
+      index: b.index, finalizedAt: b.finalizedAt, photoId: b.photoId, confirmedBy: b.confirmedBy,
+      proposerSignature: b.proposerSignature, confirmerSignature: b.confirmerSignature, prevHash: b.prevHash, dataHash: b.dataHash,
+    })));
+    if (blockHash !== b.blockHash) return bad("the stored hash is inconsistent with its contents.");
+    if (b.proposedBy === b.confirmedBy || !parties.includes(b.proposedBy) || !parties.includes(b.confirmedBy)) {
+      return bad("the signers are not the two people on this lease.");
+    }
+    if (!(await verifyWith(publicKeys[b.proposedBy], message, b.proposerSignature))) return bad(`the signature of ${displayName(b.proposedBy)} does not verify.`);
+    if (!(await verifyWith(publicKeys[b.confirmedBy], stableStringify({ payload: JSON.parse(message), prevHash: b.prevHash }), b.confirmerSignature))) return bad(`the signature of ${displayName(b.confirmedBy)} does not verify.`);
+    if (withPhotos && b.photoId) {
+      const r = await fetch(`/api/leases/${lease.id}/photos/${b.photoId}`, { headers: { Authorization: "Bearer " + token } });
+      const hash = await sha256Hex(await (await r.blob()).arrayBuffer());
+      if (hash !== b.data.photoHash) return bad("the stored photo no longer matches the one that was signed.");
+      photosChecked++;
+    }
+    prev = b.blockHash;
+  }
+  return { valid: true, blocks: chain.blocks.length, photosChecked };
+}
+
+function headKey(leaseId) {
+  return "rev_head_" + username + "_" + leaseId;
+}
+
+function checkRollback(detail) {
+  let seen = null;
+  try { seen = JSON.parse(localStorage.getItem(headKey(detail.lease.id))); } catch (e) {}
+  if (!seen) return null;
+  const block = detail.chain.blocks[seen.index];
+  if (!block || block.blockHash !== seen.blockHash) {
+    return `The record no longer contains entry #${seen.index} that you last saw. History has been removed or rewritten.`;
+  }
+  return null;
+}
+
+function rememberHead(detail) {
+  const blocks = detail.chain.blocks;
+  if (blocks.length === 0) return;
+  const head = blocks[blocks.length - 1];
+  try { localStorage.setItem(headKey(detail.lease.id), JSON.stringify({ index: head.index, blockHash: head.blockHash })); } catch (e) {}
+}
+
+async function runSilentVerify(detail) {
+  const chip = document.getElementById("lv_verify");
+  const result = await clientVerify(detail, false);
+  const rollback = checkRollback(detail);
+  if (!result.valid) {
+    chip.className = "verify-line bad";
+    chip.innerHTML = `<strong>Warning:</strong> your browser checked every hash and signature and found a problem. ${escapeHtml(result.reason)}`;
+  } else if (rollback) {
+    chip.className = "verify-line bad";
+    chip.innerHTML = `<strong>Warning:</strong> ${escapeHtml(rollback)}`;
+  } else {
+    chip.className = "verify-line ok";
+    chip.innerHTML = result.blocks === 0
+      ? `${icon("shield", 16)} Nothing recorded yet. Everything added here will be signed by both of you.`
+      : `${icon("check", 16)} Checked in your browser: all ${result.blocks} ${result.blocks === 1 ? "entry has" : "entries have"} valid hashes and valid signatures from both of you.`;
+    rememberHead(detail);
+  }
+}
+
+async function verifyInBrowser() {
+  try {
+    const detail = await api(`/api/leases/${currentLeaseId}`);
+    const result = await clientVerify(detail, true);
+    const rollback = checkRollback(detail);
+    if (!result.valid) showMsg("chainMsg", "Problem found. " + result.reason, false);
+    else if (rollback) showMsg("chainMsg", "Problem found. " + rollback, false);
+    else showMsg("chainMsg", `Everything checks out. Your browser re-checked ${result.blocks} ${result.blocks === 1 ? "entry" : "entries"}, every signature and ${result.photosChecked} ${result.photosChecked === 1 ? "photo" : "photos"} without trusting the server.`, true);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+async function downloadReceipt() {
+  if (!ensureKey()) return;
+  try {
+    const detail = await api(`/api/leases/${currentLeaseId}`);
+    const blocks = detail.chain.blocks;
+    if (blocks.length === 0) throw new Error("There is nothing to put on a receipt yet.");
+    const head = blocks[blocks.length - 1];
+    const receipt = { v: 1, kind: "head-receipt", leaseId: detail.lease.id, headIndex: head.index, headHash: head.blockHash, issuedAt: new Date().toISOString(), signer: username };
+    const signature = await signMessage(stableStringify(receipt));
+    downloadJson(`receipt-${detail.lease.id}-${head.index}.json`, { receipt, signature, publicKey: myPublicKey, fingerprint: await fingerprintOf(myPublicKey) });
+    showMsg("chainMsg", "Receipt signed with your key and downloaded. Keep it: it proves what the record looked like today.", true);
+  } catch (e) {
+    showMsg("chainMsg", e.message, false);
+  }
+}
+
+function openReceiptModal() {
+  openModal(modalHead("Check a receipt") + `<div class="modal-body">
+    <p>Choose a receipt you downloaded earlier. We'll check that it is genuine and that the record still matches it.</p>
+    <div class="dropzone" id="receiptDrop" tabindex="0" role="button" aria-label="Choose a receipt file">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+      <span>Drop files here or <u>browse</u></span>
+      <small>A receipt .json file</small>
+      <input id="receiptInput" type="file" accept="application/json" hidden>
+    </div></div>`);
+  const zone = document.getElementById("receiptDrop");
+  const input = document.getElementById("receiptInput");
+  zone.addEventListener("click", (e) => { if (e.target !== input) input.click(); });
+  zone.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); } });
+  input.addEventListener("change", () => { if (input.files[0]) checkReceiptFile(input.files[0]); });
+  ["dragenter", "dragover"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.remove("over"); }));
+  zone.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) checkReceiptFile(e.dataTransfer.files[0]); });
+}
+
+async function checkReceiptFile(file) {
+  closeModal();
+  try {
+    const parsed = JSON.parse(await file.text());
+    const detail = await api(`/api/leases/${currentLeaseId}`);
+    const r = parsed.receipt;
+    if (r.leaseId !== detail.lease.id) throw new Error("This receipt is for a different lease.");
+    if (detail.publicKeys[r.signer] !== parsed.publicKey) throw new Error("The receipt's key is not the registered key of " + r.signer + ".");
+    if (!(await verifyWith(parsed.publicKey, stableStringify(r), parsed.signature))) throw new Error("The receipt's signature is not valid.");
+    const block = detail.chain.blocks[r.headIndex];
+    if (!block || block.blockHash !== r.headHash) {
+      showMsg("chainMsg", `The receipt is genuine, but the record no longer matches it: entry #${r.headIndex} is missing or different. History was changed after ${fmtDateTime(r.issuedAt)}.`, false);
+    } else {
+      showMsg("chainMsg", `The receipt is genuine and the record still matches it up to entry #${r.headIndex}.`, true);
+    }
+  } catch (e) {
+    showMsg("chainMsg", e.message || "Could not read that receipt.", false);
+  }
+}
+
+const PHASES = [["agreement", "Agreement"], ["move-in", "Move-in"], ["tenancy", "Tenancy"], ["move-out", "Move-out"]];
+const PHASE_HINT = {
+  agreement: "Record the verification steps and the rental agreement. Both of you sign the agreement document's fingerprint. Move-in, rent and society requests open after that.",
+  "move-in": "The agreement is signed. Record the security deposit and the condition of the flat at move-in.",
+  tenancy: "The tenancy is running. Log rent, repairs and damage here. The landlord can send maintenance requests to the society office.",
+  "move-out": "Move-out is recorded. Rent and repair entries can still be added until the lease is ended."
+};
+
+function renderPhase(detail) {
+  const box = document.getElementById("lv_phase");
+  if (!detail.lease.requireAgreement || detail.lease.status !== "active") { box.classList.add("hidden"); return; }
+  const at = PHASES.findIndex((p) => p[0] === detail.phase);
+  box.innerHTML = `<ol class="phase-steps">${PHASES.map((p, i) => `<li class="${i < at ? "done" : i === at ? "now" : ""}">${i < at ? icon("check", 14) : `<span class="phase-no">${i + 1}</span>`}<span>${p[1]}</span></li>`).join("")}</ol><p class="muted small">${PHASE_HINT[detail.phase] || ""}</p>`;
+  box.classList.remove("hidden");
+}
+
+const REQUEST_RULES = {
+  REQUESTED: ["landlord", [null]],
+  ACKNOWLEDGED: ["society", ["REQUESTED", "REOPENED"]],
+  REJECTED: ["society", ["REQUESTED", "ACKNOWLEDGED", "REOPENED"]],
+  COMPLETED: ["society", ["REQUESTED", "ACKNOWLEDGED", "REOPENED"]],
+  REOPENED: ["landlord", ["COMPLETED"]],
+  CANCELLED: ["landlord", ["REQUESTED", "ACKNOWLEDGED", "REOPENED"]],
+  CLOSED: ["landlord", ["COMPLETED"]]
+};
+const STEP_LABEL = { REQUESTED: "Requested", ACKNOWLEDGED: "Acknowledged", REJECTED: "Declined", COMPLETED: "Marked completed", REOPENED: "Reopened", CANCELLED: "Cancelled", CLOSED: "Accepted and closed" };
+const STATUS_PILL = { Requested: "pill-amber", Acknowledged: "pill-amber", Reopened: "pill-orange", Completed: "pill-good", Closed: "pill-good", Declined: "pill-neutral", Cancelled: "pill-neutral" };
+const STEP_FORM = {
+  ACKNOWLEDGED: { title: "Acknowledge this request", go: "Acknowledge", fields: [["note", "Note for the landlord (optional)", "text", false], ["expectedBy", "Expected by (optional)", "date", false]] },
+  COMPLETED: { title: "Mark as completed", go: "Mark completed", fields: [["note", "What was done (optional)", "text", false]] },
+  REJECTED: { title: "Decline this request", go: "Decline", fields: [["reason", "Reason", "text", true]] },
+  REOPENED: { title: "Reopen this request", go: "Reopen", fields: [["reason", "What is still wrong", "text", true]] },
+  CANCELLED: { title: "Cancel this request", go: "Cancel request", fields: [["reason", "Reason (optional)", "text", false]] },
+  CLOSED: { title: "Accept the work and close", go: "Accept and close", fields: [["note", "Note (optional)", "text", false]] }
+};
+const REQUEST_CATEGORIES = ["Plumbing", "Electrical", "Water supply", "Lift or common area", "Security", "Parking", "Other"];
+let requestList = [];
+
+async function verifyTrail(r, knownKeys) {
+  let prevHash = "0".repeat(64);
+  let prevKind = null;
+  for (let i = 0; i < r.steps.length; i++) {
+    const s = r.steps[i];
+    const bad = (why) => ({ valid: false, reason: `Step ${i}: ${why}` });
+    const rule = REQUEST_RULES[s.kind];
+    if (!rule) return bad("unknown step.");
+    if (s.index !== i || s.prevHash !== prevHash) return bad("does not link to the step before it.");
+    const hash = await sha256Hex(enc.encode(stableStringify({ requestId: r.id, index: s.index, kind: s.kind, by: s.by, at: s.at, data: s.data, prevHash: s.prevHash, signature: s.signature })));
+    if (hash !== s.stepHash) return bad("the stored hash does not match its contents.");
+    if (!rule[1].includes(prevKind)) return bad("this step is not allowed after the previous one.");
+    if (s.by !== (rule[0] === "landlord" ? r.landlordUsername : r.societyUsername)) return bad("signed by someone who may not take this step.");
+    if (knownKeys && knownKeys[s.by] && knownKeys[s.by] !== r.publicKeys[s.by]) return bad("the key used is not the registered key of " + displayName(s.by) + ".");
+    const message = stableStringify({ v: 1, requestId: r.id, leaseId: r.leaseId, kind: s.kind, by: s.by, at: s.at, data: s.data, prevHash: s.prevHash });
+    if (!(await verifyWith(r.publicKeys[s.by], message, s.signature))) return bad(`the signature of ${displayName(s.by)} does not verify.`);
+    prevHash = s.stepHash;
+    prevKind = s.kind;
+  }
+  return { valid: true, steps: r.steps.length };
+}
+
+function trailHtml(r) {
+  return `<ol class="trail">${r.steps.map((s) => {
+    const d = s.data;
+    const extra = [d.note, d.reason, d.expectedBy ? "expected by " + fmtDate(d.expectedBy) : ""].filter(Boolean).map(escapeHtml).join(" · ");
+    return `<li><strong>${STEP_LABEL[s.kind]}</strong> <span class="muted small">${escapeHtml(displayName(s.by))} · ${fmtDateTime(s.at)}</span>${extra ? `<div class="small">${extra}</div>` : ""}</li>`;
+  }).join("")}</ol>`;
+}
+
+function ledgerEntryMissing(r) {
+  if (!r.ledgerEventId || !lastDetail || !lastDetail.chain) return false;
+  return !lastDetail.chain.blocks.some((b) => b.eventId === r.ledgerEventId) && !lastDetail.pendingEvents.some((e) => e.id === r.ledgerEventId);
+}
+
+function requestActions(r, viewer) {
+  const k = r.lastKind;
+  const btn = (kind, label, cls) => `<button class="btn ${cls || "btn-secondary"} btn-sm" onclick="openStepForm('${r.id}', '${kind}')">${label}</button>`;
+  const out = [];
+  if (viewer === "society") {
+    if (k === "REQUESTED" || k === "REOPENED") out.push(btn("ACKNOWLEDGED", "Acknowledge"));
+    if (["REQUESTED", "ACKNOWLEDGED", "REOPENED"].includes(k)) out.push(btn("COMPLETED", "Mark completed", "btn-primary"), btn("REJECTED", "Decline"));
+  } else if (viewer === "landlord" && lastDetail && lastDetail.lease.status === "active") {
+    if (k === "COMPLETED") out.push(btn("CLOSED", "Accept and close", "btn-primary"), btn("REOPENED", "Reopen"));
+    if (["REQUESTED", "ACKNOWLEDGED", "REOPENED"].includes(k)) out.push(btn("CANCELLED", "Cancel request"));
+    if (k === "CLOSED" && ledgerEntryMissing(r)) out.push(`<button class="btn btn-primary btn-sm" onclick="retryLedgerEntry('${r.id}')">Add the ledger entry</button>`);
+  }
+  return out.length ? `<div class="btn-row tight">${out.join("")}</div>` : "";
+}
+
+function requestCard(r, viewer) {
+  const first = r.steps[0].data;
+  const who = viewer === "society" ? `${escapeHtml(r.leaseAddress || "")} · from ${escapeHtml(displayName(r.landlordUsername))}` : `Sent to ${escapeHtml(displayName(r.societyUsername))}`;
+  const link = r.ledgerEventId ? `<p class="muted small">${icon("check", 14)} Linked to ledger entry ${escapeHtml(r.ledgerEventId)}${ledgerEntryMissing(r) ? " (not added yet)" : ""}</p>` : "";
+  return `<div class="card event-card req-card">
+    <div class="event-top"><span class="kind">${icon("building", 16)} ${escapeHtml(first.category)}</span><span class="req-pills">${first.urgency === "Urgent" ? `<span class="pill pill-orange">Urgent</span>` : ""}<span class="pill ${STATUS_PILL[r.status]}">${r.status}</span></span></div>
+    <p class="event-text">${escapeHtml(first.description)}</p>
+    <p class="muted small">${who}</p>
+    ${trailHtml(r)}
+    ${link}
+    <p class="trail-check muted small" data-req="${r.id}">Checking the signatures in your browser...</p>
+    ${requestActions(r, viewer)}
+  </div>`;
+}
+
+async function runTrailChecks(viewer) {
+  for (const el of document.querySelectorAll(".trail-check[data-req]")) {
+    const r = requestList.find((x) => x.id === el.dataset.req);
+    if (!r) continue;
+    const known = viewer === "society" ? null : lastDetail && lastDetail.publicKeys;
+    const res = await verifyTrail(r, known);
+    el.className = "trail-check small " + (res.valid ? "ok" : "bad");
+    el.innerHTML = res.valid ? `${icon("check", 14)} Checked in your browser: ${res.steps} ${res.steps === 1 ? "step" : "steps"}, each signed by the right person and linked to the one before.` : `<strong>Warning:</strong> ${escapeHtml(res.reason)}`;
+  }
+}
+
+async function showSocietyDashboard() {
+  const res = await api("/api/requests");
+  requestList = res.requests;
+  const wrap = document.getElementById("societyList");
+  wrap.innerHTML = requestList.length === 0
+    ? `<div class="card empty-card"><h2>No requests yet</h2><p>When a landlord names your username as the society office and sends a request, it appears here.</p><div class="fp-box mono">${escapeHtml(username)}</div></div>`
+    : requestList.map((r) => requestCard(r, "society")).join("");
+  runTrailChecks("society");
+}
+
+async function renderSociety(detail) {
+  const lease = detail.lease;
+  const panel = document.getElementById("lv_society");
+  const iAmLandlord = lease.landlordUsername === username;
+  const active = lease.status === "active";
+  const hasOffice = Boolean(lease.societyUsername);
+  const unlocked = !lease.requireAgreement || detail.phase !== "agreement";
+  panel.classList.toggle("hidden", !(hasOffice || (iAmLandlord && active)));
+  document.getElementById("socIntro").textContent = iAmLandlord
+    ? (hasOffice ? `Requests go to ${displayName(lease.societyUsername)}. They sign when they acknowledge or complete the work, and you sign when you accept it.` : "Choose the society maintenance office for this property. They need an account with the Society office role.")
+    : `Maintenance requests the landlord sends to ${displayName(lease.societyUsername || "the society office")} appear here. You can read them but not change them.`;
+  document.getElementById("socPick").classList.toggle("hidden", !(iAmLandlord && active));
+  document.getElementById("socUser").value = lease.societyUsername || "";
+  document.getElementById("socNew").classList.toggle("hidden", !(iAmLandlord && active && hasOffice && unlocked));
+  if (iAmLandlord && active && hasOffice && !unlocked) document.getElementById("socIntro").textContent += " Requests open once the agreement is signed.";
+  const cat = document.getElementById("reqCategory");
+  if (!cat.options.length) cat.innerHTML = REQUEST_CATEGORIES.map((c) => `<option>${c}</option>`).join("");
+  if (!hasOffice) { document.getElementById("socList").innerHTML = ""; return; }
+  const res = await api(`/api/requests?leaseId=${lease.id}`);
+  requestList = res.requests;
+  const viewer = iAmLandlord ? "landlord" : "tenant";
+  document.getElementById("socList").innerHTML = requestList.length ? requestList.map((r) => requestCard(r, viewer)).join("") : `<p class="muted small">No requests yet.</p>`;
+  runTrailChecks(viewer);
+}
+
+async function saveSociety() {
+  const societyUsername = document.getElementById("socUser").value.trim();
+  try {
+    await api(`/api/leases/${currentLeaseId}/society`, { method: "POST", body: JSON.stringify({ societyUsername }) });
+    showMsg("socMsg", societyUsername ? "Society office saved." : "Society office removed.", true);
+    refreshLeaseView();
+  } catch (e) {
+    showMsg("socMsg", e.message, false);
+  }
+}
+
+async function signStep(r, kind, data) {
+  const check = await verifyTrail(r, null);
+  if (!check.valid) throw new Error("This request's signatures do not check out, so nothing was signed. " + check.reason);
+  const last = r.steps[r.steps.length - 1];
+  const at = new Date().toISOString();
+  const message = stableStringify({ v: 1, requestId: r.id, leaseId: r.leaseId, kind, by: username, at, data, prevHash: last.stepHash });
+  const signature = await signMessage(message);
+  return api(`/api/requests/${r.id}/steps`, { method: "POST", body: JSON.stringify({ kind, at, data, signature }) });
+}
+
+async function sendRequest() {
+  if (!ensureKey()) return;
+  const lease = lastDetail.lease;
+  const data = {
+    category: document.getElementById("reqCategory").value,
+    description: document.getElementById("reqDesc").value.trim(),
+    urgency: document.getElementById("reqUrgency").value,
+    society: lease.societyUsername
+  };
+  if (data.description.length < 3) { showMsg("socMsg", "Describe what needs to be done.", false); return; }
+  const id = "req-" + bytesToHex(crypto.getRandomValues(new Uint8Array(4)));
+  const at = new Date().toISOString();
+  const btn = document.getElementById("reqSendBtn");
+  btn.disabled = true;
+  try {
+    const signature = await signMessage(stableStringify({ v: 1, requestId: id, leaseId: lease.id, kind: "REQUESTED", by: username, at, data, prevHash: "0".repeat(64) }));
+    await api("/api/requests", { method: "POST", body: JSON.stringify({ leaseId: lease.id, id, at, data, signature }) });
+    document.getElementById("reqDesc").value = "";
+    showMsg("socMsg", "Request signed and sent to the society office.", true);
+    await refreshLeaseView();
+  } catch (e) {
+    showMsg("socMsg", e.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function openStepForm(requestId, kind) {
+  if (!ensureKey()) return;
+  const form = STEP_FORM[kind];
+  const fields = form.fields.map(([name, label, type]) =>
+    `<div class="field"><label for="sf_${name}">${label}</label><input id="sf_${name}" type="${type}" maxlength="300"></div>`).join("");
+  openModal(modalHead(form.title) + `<div class="modal-body">${fields}
+    <p class="muted small">Your browser signs this step with your key. It is added to the request's signed trail and cannot be edited later.</p>
+    <div class="btn-row"><button class="btn btn-primary" id="sfGo" onclick="submitStepForm('${requestId}', '${kind}')">${form.go}</button><button class="btn btn-ghost" onclick="closeModal()">Back</button></div>
+    <div id="sfMsg"></div></div>`);
+}
+
+async function submitStepForm(requestId, kind) {
+  const r = requestList.find((x) => x.id === requestId);
+  const data = {};
+  for (const [name, label, , required] of STEP_FORM[kind].fields) {
+    const value = document.getElementById("sf_" + name).value.trim();
+    if (required && !value) { showMsg("sfMsg", "Please fill in: " + label.toLowerCase() + ".", false); return; }
+    if (value) data[name] = value;
+  }
+  document.getElementById("sfGo").disabled = true;
+  try {
+    let ledgerEventId = null;
+    if (kind === "CLOSED") {
+      ledgerEventId = newEventId();
+      data.ledgerEventId = ledgerEventId;
+    }
+    const updated = await signStep(r, kind, data);
+    closeModal();
+    if (kind === "CLOSED") {
+      try {
+        await proposeLedgerEntry(updated, ledgerEventId);
+        showToast("Request closed and the record sent to the tenant to sign.", true);
+      } catch (e) {
+        showToast("Request closed, but the ledger entry was not sent: " + e.message);
+      }
+    } else {
+      showToast("Signed and saved.", true);
+    }
+    if (role === "society") await showSocietyDashboard();
+    else await refreshLeaseView();
+  } catch (e) {
+    const btn = document.getElementById("sfGo");
+    if (btn) btn.disabled = false;
+    showMsg("sfMsg", e.message, false);
+  }
+}
+
+async function proposeLedgerEntry(r, ledgerEventId) {
+  const done = r.steps.filter((s) => s.kind === "COMPLETED").pop();
+  const first = r.steps[0].data;
+  const summary = first.description.length > 120 ? first.description.slice(0, 117) + "..." : first.description;
+  const description = `Society request ${r.id} closed: ${first.category.toLowerCase()}, ${summary.replace(/[.\s]+$/, "")}. Completion record ${done.stepHash.slice(0, 16)}.`;
+  await sendJsonEvent("MAINTENANCE_UPDATE", { description }, ledgerEventId);
+}
+
+async function retryLedgerEntry(requestId) {
+  if (!ensureKey()) return;
+  const r = requestList.find((x) => x.id === requestId);
+  try {
+    await proposeLedgerEntry(r, r.ledgerEventId);
+    showToast("Ledger entry sent to the tenant to sign.", true);
+    await refreshLeaseView();
+  } catch (e) {
+    showToast(e.message);
+  }
+}
+
+wireDropzone();
+render();
+</script>
+</body>
+</html>
